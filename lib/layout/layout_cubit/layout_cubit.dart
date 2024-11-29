@@ -145,32 +145,56 @@ class LayoutCubit extends Cubit<LayoutStates> {
     }
   }
 
-  void addOrRemoveFromFavorites({required String productID}) async {
-    Response response = await http.post(
+  int favoriteItemCount = 0;
+
+  Future<void> addOrRemoveFromFavorites({required String productID}) async {
+    try {
+      // هنا يمكنك تعديل حالة البداية إن كنت تحتاج
+      // emit(AddOrRemoveFromFavoritesLoadingState());
+
+      if (userToken == null || userToken!.isEmpty) {
+        // حالة في حال عدم وجود توكن المستخدم
+        // emit(FailedToAddOrRemoveFromFavoritesState('User token is missing.'));
+        return;
+      }
+
+      // طلب إضافة أو إزالة المنتج من المفضلة
+      Response response = await http.post(
         Uri.parse("https://student.valuxapps.com/api/favorites"),
         headers: {
+          "Authorization": userToken!,
           "lang": "en",
-          "Authorization": userToken!
         },
         body: {
-          "product_id": productID
+          "product_id": productID,
+        },
+      );
+
+      var responseBody = jsonDecode(response.body);
+
+      if (responseBody['status'] == true) {
+        // إضافة أو إزالة المنتج من المفضلة
+        if (favorites.any((product) => product.id.toString() == productID)) {
+          favorites.removeWhere((product) => product.id.toString() == productID);
+        } else {
+          ProductModel product = await getProductById(productID); // استرجاع المنتج من خلال الـ ID
+          favorites.add(product);
         }
-    );
-    var responseBody = jsonDecode(response.body);
-    if (responseBody['status'] == true) {
-      if (favoritesID.contains(productID)) {
-        favoritesID.remove(productID);
+
+        // تحديث عداد المفضلة
+        favoriteItemCount = favorites.length;
+
+        // emit(AddOrRemoveFromFavoritesSuccessState());
       } else {
-        favoritesID.add(productID);
+        // emit(FailedToAddOrRemoveFromFavoritesState(responseBody['message']));
       }
-      await getFavorites();
-      emit(AddOrRemoveItemFromFavoritesSuccessState());
-    } else {
-      emit(FailedToAddOrRemoveItemFromFavoritesState());
+    } catch (e) {
+      // التعامل مع الأخطاء
+      // emit(FailedToAddOrRemoveFromFavoritesState(e.toString()));
     }
   }
 
-  List<ProductModel> carts = [];
+
   int totalPrice = 0;
 
   void getCarts() async {
@@ -223,17 +247,19 @@ class LayoutCubit extends Cubit<LayoutStates> {
 
 
 
+
+  List<ProductModel> carts = [];
+  int cartItemCount = 0;
+
   Future<void> addOrRemoveFromCart({required String productID}) async {
     try {
       emit(AddOrRemoveFromCartLoadingState());
 
-      // تحقق من أن الـ userToken موجود
       if (userToken == null || userToken!.isEmpty) {
         emit(FailedToAddOrRemoveFromCartState('User token is missing.'));
         return;
       }
 
-      // إرسال الطلب إلى الـ API لإضافة أو إزالة المنتج من العربة
       Response response = await http.post(
         Uri.parse("https://student.valuxapps.com/api/carts"),
         headers: {
@@ -248,29 +274,24 @@ class LayoutCubit extends Cubit<LayoutStates> {
       var responseBody = jsonDecode(response.body);
 
       if (responseBody['status'] == true) {
-        // إذا كان المنتج موجودًا في العربة، قم بإزالته
         if (carts.any((product) => product.id.toString() == productID)) {
           carts.removeWhere((product) => product.id.toString() == productID);
         } else {
-          // إذا لم يكن المنتج في العربة، أضفه
           ProductModel product = await getProductById(productID);
           carts.add(product);
         }
 
-        // تحديث السعر الإجمالي
-        totalPrice = responseBody['data']['total'];
+        // Update the cart item count
+        cartItemCount = carts.length;
 
         emit(AddOrRemoveFromCartSuccessState());
       } else {
-        // إذا كانت الاستجابة تحتوي على خطأ
         emit(FailedToAddOrRemoveFromCartState(responseBody['message']));
       }
     } catch (e) {
-      // التعامل مع الأخطاء في حال حدوث استثناء
       emit(FailedToAddOrRemoveFromCartState(e.toString()));
     }
   }
-
   Future<ProductModel> getProductById(String productID) async {
     Response response = await http.get(
         Uri.parse("https://student.valuxapps.com/api/products/$productID"),

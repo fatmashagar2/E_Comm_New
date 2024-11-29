@@ -20,18 +20,23 @@ class LayoutScreen extends StatelessWidget {
         return Scaffold(
           backgroundColor: fifthColor,
           appBar: AppBar(
-
             actions: [
               InkWell(
-                  onTap: (){
-                    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>LoginScreen()));
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.only(right: 12),
-                    child: Image.asset('assets/images/exit.png',width: 48,height: 48,),
-                  )
-
-              )
+                onTap: () {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => LoginScreen()),
+                  );
+                },
+                child: Padding(
+                  padding: const EdgeInsets.only(right: 12),
+                  child: Image.asset(
+                    'assets/images/exit.png',
+                    width: 48,
+                    height: 48,
+                  ),
+                ),
+              ),
             ],
             backgroundColor: fifthColor,
             elevation: 0,
@@ -39,7 +44,6 @@ class LayoutScreen extends StatelessWidget {
               "assets/images/img2.gif",
               height: 50,
               width: 50,
-
             ),
           ),
           body: cubit.layoutScreens[cubit.bottomNavIndex],
@@ -57,7 +61,7 @@ class LayoutScreen extends StatelessWidget {
                 cubit.changeBottomNavIndex(index: index);
               },
               selectedIndex: cubit.bottomNavIndex,
-              tabs: const [
+              tabs: [
                 GButton(
                   icon: Icons.home,
                   text: "Home",
@@ -65,10 +69,58 @@ class LayoutScreen extends StatelessWidget {
                 GButton(
                   icon: Icons.favorite,
                   text: "Favorites",
+                  iconColor: cubit.favoriteItemCount > 0 ? mainColor : Colors.grey, // Change color based on count
+                  leading: cubit.favoriteItemCount > 0
+                      ? Stack(
+                    clipBehavior: Clip.none,
+                    children: [
+                      Icon(
+                        Icons.favorite,
+                        color: cubit.favoriteItemCount > 0 ? mainColor : Colors.grey,
+                      ),
+                      Positioned(
+                        right: -5,
+                        top: -8,
+                        child: Text(
+                          '${cubit.favoriteItemCount}',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
+                  )
+                      : null, // Show item count if favorites are not empty
                 ),
                 GButton(
                   icon: Icons.shopping_cart,
                   text: "Cart",
+                  iconColor: cubit.cartItemCount > 0 ? mainColor : Colors.grey, // Change color based on count
+                  leading: cubit.cartItemCount > 0
+                      ? Stack(
+                    clipBehavior: Clip.none,
+                    children: [
+                      Icon(
+                        Icons.shopping_cart,
+                        color: cubit.cartItemCount > 0 ? mainColor : Colors.grey,
+                      ),
+                      Positioned(
+                        right: -5,
+                        top: -8,
+                        child: Text(
+                          '${cubit.cartItemCount}',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
+                  )
+                      : null, // Show item count if cart is not empty
                 ),
                 GButton(
                   icon: Icons.person,
