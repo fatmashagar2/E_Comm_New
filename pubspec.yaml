@@ -53,6 +53,7 @@ dependencies:
   google_nav_bar: ^5.0.7
   audioplayers: ^6.1.0
   image_picker: ^1.1.2
+  path_provider: ^2.1.5
 
 dev_dependencies:
   flutter_launcher_icons: ^0.10.0
@@ -109,6 +110,16 @@ flutter:
    - family: Sevillana
      fonts:
         - asset: assets/fonts/Sevillana/Sevillana-Regular.ttf
+   - family: Sixtyfour_Convergence
+     fonts:
+       - asset: assets/fonts/Sixtyfour_Convergence/static/SixtyfourConvergence-Regular.ttf
+   - family: Sixtyfour_Convergence
+     fonts:
+       - asset: assets/fonts/Sixtyfour_Convergence/SixtyfourConvergence-Regular-VariableFont_BLED,SCAN,XELA,YELA.ttf
+   - family: Protest_Revolution
+     fonts:
+       - asset: assets/fonts/Protest_Revolution/ProtestRevolution-Regular.ttf
+
    - family: Ponnala
      fonts:
        - asset: assets/fonts/Ponnala/Ponnala-Regular.ttf

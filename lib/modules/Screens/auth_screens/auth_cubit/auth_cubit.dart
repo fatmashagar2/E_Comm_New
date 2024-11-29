@@ -32,15 +32,19 @@ class AuthCubit extends Cubit<AuthStates>{
         {
           var data = jsonDecode(response.body);
           if( data['status'] == true )
-            {
-              debugPrint("Response is : $data");
-              emit(RegisterSuccessState());
-            }
+          {
+            // debugPrint("User login success and his Data is : ${responseData['data']['token']}");
+            await CacheNetwork.insertToCache(key: "token", value: data['data']['token']);
+            await CacheNetwork.insertToCache(key: "password", value: password);
+            userToken = await CacheNetwork.getCacheData(key: "token");
+            currentPassword = await CacheNetwork.getCacheData(key: "password");
+            emit(RegisterSuccessState());
+          }
           else
-            {
-              debugPrint("Response is : $data");
-              emit(FailedToRegisterState(message: data['message']));
-            }
+          {
+            debugPrint("Failed to login, reason is : ${data['message']}");
+            emit(FailedToLoginState(message: data['message']));
+          }
         }
     }
     catch(e){

@@ -2,12 +2,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart'; // استيراد الحزمة
+import 'dart:io'; // لاستعمال File لتحميل الصورة
+import 'package:hive/hive.dart';
+import 'package:path_provider/path_provider.dart';
 import '../../../layout/layout_cubit/layout_cubit.dart';
 import '../../../layout/layout_cubit/layout_states.dart';
 import '../../../shared/style/colors.dart';
 import '../change_password_screen.dart';
 import '../update_user_data_screen.dart';
-import 'dart:io'; // لاستعمال File لتحميل الصورة
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({Key? key}) : super(key: key);
@@ -18,12 +20,31 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   File? _image; // متغير لتخزين الصورة المختارة
-
   final ImagePicker _picker = ImagePicker();
+
+  // فتح صندوق Hive لتخزين الصورة
+  late Box<String> imageBox;
+
+  @override
+  void initState() {
+    super.initState();
+    _initializeHive();
+  }
+
+  // دالة لتهيئة Hive
+  Future<void> _initializeHive() async {
+    final appDocDir = await getApplicationDocumentsDirectory();
+    Hive.init(appDocDir.path);
+    imageBox = await Hive.openBox<String>('imageBox');
+    setState(() {
+      _image = imageBox.get('userProfileImage') != null
+          ? File(imageBox.get('userProfileImage')!)
+          : null;
+    });
+  }
 
   // دالة لاختيار صورة من المعرض أو الكاميرا
   Future<void> _pickImage() async {
-    // عرض مربع حوار لاختيار مصدر الصورة (كاميرا أو معرض)
     final XFile? pickedFile = await showDialog<XFile?>(
       context: context,
       builder: (BuildContext context) {
@@ -53,6 +74,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     if (pickedFile != null) {
       setState(() {
         _image = File(pickedFile.path); // تعيين الصورة المختارة
+        imageBox.put('userProfileImage', pickedFile.path); // حفظ المسار في Hive
       });
     }
   }

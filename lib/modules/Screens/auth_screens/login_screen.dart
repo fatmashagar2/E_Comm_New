@@ -1,156 +1,273 @@
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:untitled15/modules/Screens/auth_screens/register_screen.dart';
-import '../../../layout/layout_screen.dart';
-import '../../../shared/style/colors.dart';
-import '../../Widgets/alert_dialog.dart';
-import '../../Widgets/login_widgets/drop_down_widget.dart';
-import '../../Widgets/login_widgets/text_field_widget.dart';
+import 'package:rive/rive.dart';
+import '../../../layout/layout_screen.dart';  // The page you navigate to after success
+import '../../../modules/Screens/auth_screens/register_screen.dart';  // Registration page
+import 'auth_cubit/animation_enum.dart';
 import 'auth_cubit/auth_cubit.dart';
 import 'auth_cubit/auth_states.dart';
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends StatefulWidget {
+  const LoginScreen({super.key});
+
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  Artboard? riveArtboard;
+  late RiveAnimationController controllerIdle;
+  late RiveAnimationController controllerHandsUp;
+  late RiveAnimationController controllerHandsDown;
+  late RiveAnimationController controllerLookLeft;
+  late RiveAnimationController controllerLookRight;
+  late RiveAnimationController controllerSuccess;
+  late RiveAnimationController controllerFail;
+
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
-  final formKey = GlobalKey<FormState>();
+  final passwordFocusNode = FocusNode();
 
-  LoginScreen({Key? key}) : super(key: key);
+  bool isLookingLeft = false;
+  bool isLookingRight = false;
+  bool isPasswordVisible = false; // To toggle password visibility
+
+  void removeAllControllers() {
+    riveArtboard?.artboard.removeController(controllerIdle);
+    riveArtboard?.artboard.removeController(controllerHandsUp);
+    riveArtboard?.artboard.removeController(controllerHandsDown);
+    riveArtboard?.artboard.removeController(controllerLookLeft);
+    riveArtboard?.artboard.removeController(controllerLookRight);
+    riveArtboard?.artboard.removeController(controllerSuccess);
+    riveArtboard?.artboard.removeController(controllerFail);
+    isLookingLeft = false;
+    isLookingRight = false;
+  }
+
+  void addSpecificAnimationAction(RiveAnimationController<dynamic> neededAnimationAction) {
+    removeAllControllers();
+    riveArtboard?.artboard.addController(neededAnimationAction);
+  }
+
+  @override
+  void dispose() {
+    passwordFocusNode.removeListener(() {});
+    super.dispose();
+  }
+
+  void checkForPasswordFocusNodeToChangeAnimationState() {
+    passwordFocusNode.addListener(() {
+      if (passwordFocusNode.hasFocus) {
+        addSpecificAnimationAction(controllerHandsUp);
+      } else if (!passwordFocusNode.hasFocus) {
+        addSpecificAnimationAction(controllerHandsDown);
+      }
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    controllerIdle = SimpleAnimation(AnimationEnum.idle.name);
+    controllerHandsUp = SimpleAnimation(AnimationEnum.Hands_up.name);
+    controllerHandsDown = SimpleAnimation(AnimationEnum.hands_down.name);
+    controllerLookRight = SimpleAnimation(AnimationEnum.Look_down_right.name);
+    controllerLookLeft = SimpleAnimation(AnimationEnum.Look_down_left.name);
+    controllerSuccess = SimpleAnimation(AnimationEnum.success.name);
+    controllerFail = SimpleAnimation(AnimationEnum.fail.name);
+
+    loadRiveFileWithItsStates();
+    checkForPasswordFocusNodeToChangeAnimationState();
+  }
+
+  void loadRiveFileWithItsStates() {
+    rootBundle.load('assets/login_animation.riv').then(
+          (data) {
+        final file = RiveFile.import(data);
+        final artboard = file.mainArtboard;
+        artboard.addController(controllerIdle);
+        setState(() {
+          riveArtboard = artboard;
+        });
+      },
+    );
+  }
+
+  void validateEmailAndPassword(AuthCubit authCubit) {
+    if (formKey.currentState!.validate()) {
+      authCubit.login(
+        email: emailController.text,
+        password: passwordController.text,
+      );
+    } else {
+      addSpecificAnimationAction(controllerFail);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    final AuthCubit authCubit = BlocProvider.of<AuthCubit>(context);
+    final authCubit = BlocProvider.of<AuthCubit>(context);
     return Scaffold(
-      body: Container(
-        height: double.infinity,
-        width: double.infinity,
-        decoration: const BoxDecoration(
-          image: DecorationImage(image: AssetImage("images/auth_background.png"),fit: BoxFit.fill)
-        ),
-        child: BlocConsumer<AuthCubit,AuthStates>(
-          listener: (context,state)
-          {
-            if( state is LoginLoadingState )
-            {
-              showAlertDialog(
-                  context: context,
-                  backgroundColor: Colors.white,
-                  content: AnimatedContainer(
-                    duration: const Duration(seconds: 1),
-                    curve: Curves.easeIn,
-                    child: Row(
-                      children:
-                      [
-                        const CupertinoActivityIndicator(color: mainColor),
-                        SizedBox(width: 12.5,),
-                        const Text("wait",style: TextStyle(fontWeight: FontWeight.w500),),
-                      ],
-                    ),
-                  )
-              );
-            }
-            else if( state is FailedToLoginState )
-            {
-              showAlertDialog(
-                  context: context,
-                  backgroundColor: Colors.red,
-                  content: Text(state.message,textDirection: TextDirection.rtl,)
-              );
-            }
-            else if ( state is LoginSuccessState )
-            {
-              Navigator.pop(context);   // عشان يخرج من alertDialog
-              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => LayoutScreen()));
-            }
-          },
-          builder: (context,state){
-            return Column(
-              children:
-              [
-                Expanded(
-                  flex: 1,
-                  child: Container(
-                    alignment: Alignment.bottomCenter,
-                    padding: EdgeInsets.only(bottom: 40),
-                    child: const Text("Login to continue process",style: TextStyle(color: Colors.white,fontSize: 19,fontWeight: FontWeight.bold),),
-                  ),
+      backgroundColor: Colors.white,
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: EdgeInsets.symmetric(
+            horizontal: MediaQuery.of(context).size.width / 15,
+          ),
+          child: Column(
+            children: [
+              SizedBox(
+                height: MediaQuery.of(context).size.height / 3,
+                child: riveArtboard == null
+                    ? const SizedBox.shrink()
+                    : Rive(
+                  artboard: riveArtboard!,
                 ),
-                Expanded(
-                  flex: 2,
-                  child: Container(
-                    width: double.infinity,
-                    padding:const EdgeInsets.symmetric(horizontal: 35),
-                    decoration: const BoxDecoration(
-                        color: thirdColor,
-                        borderRadius: BorderRadius.only(topLeft: Radius.circular(35),topRight: Radius.circular(35))
-                    ),
-                    child: Form(
-                      key: formKey,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        child: ListView(
-                          children:
-                          [
-                            const Center(child: Text("Login",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 19),)),
-                            TextFieldWidget(
-                              controller: emailController,
-                              hint: "Email",
+              ),
+              BlocConsumer<AuthCubit, AuthStates>(
+                listener: (context, state) {
+                  if (state is LoginSuccessState) {
+                    addSpecificAnimationAction(controllerSuccess);
+                    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => LayoutScreen()));
+                  } else if (state is FailedToLoginState) {
+                    addSpecificAnimationAction(controllerFail);
+                    // Displaying error message when login fails
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text("Please check your email and password"),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                  }
+                },
+                builder: (context, state) {
+                  return Form(
+                    key: formKey,
+                    child: Column(
+                      children: [
+                        // Email TextField with icon
+                        TextFormField(
+                          keyboardType: TextInputType.emailAddress,
+                          controller: emailController,
+                          decoration: InputDecoration(
+                            labelText: "Email",
+                            labelStyle: TextStyle(color: Colors.black),
+                            prefixIcon: Icon(Icons.email, color: Colors.black),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10.0),
+                              borderSide: BorderSide(color: Colors.black),
                             ),
-                            SizedBox(height: 15,),
-                            TextFieldWidget(
-                              controller: passwordController,
-                              obscureText: true,
-                              hint: "Password",
+                          ),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return "Please enter an email";
+                            } else if (!value.contains('@gmail.com')) {
+                              return "Please enter a valid Gmail address";
+                            }
+                            return null;
+                          },
+                          onChanged: (value) {
+                            if (value.isNotEmpty && value.length < 16 && !isLookingLeft) {
+                              addSpecificAnimationAction(controllerLookLeft);
+                            } else if (value.isNotEmpty && value.length > 16 && !isLookingRight) {
+                              addSpecificAnimationAction(controllerLookRight);
+                            }
+                          },
+                        ),
+                        SizedBox(height: MediaQuery.of(context).size.height / 30),
+
+                        // Password TextField with icon
+                        TextFormField(
+                          controller: passwordController,
+                          obscureText: !isPasswordVisible,
+                          focusNode: passwordFocusNode,
+                          decoration: InputDecoration(
+                            labelText: "Password",
+                            labelStyle: TextStyle(color: Colors.black),
+                            prefixIcon: Icon(Icons.lock, color: Colors.black),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10.0),
+                              borderSide: BorderSide(color: Colors.black),
                             ),
-                            SizedBox(height: 15,),
-                            DropDownWidget(
-                              items: const ['mo','ali'],
-                              value: authCubit.chosenValue,
-                              onChanged: (val)=> authCubit.changeDropDownValue(val: val!)
-                            ),
-                            SizedBox(height: 25,),
-                            MaterialButton(
-                              height: 40,
-                              elevation: 0,
-                              onPressed: ()
-                              {
-                                if( formKey.currentState!.validate() == true )
-                                  {
-                                    authCubit.login(email: emailController.text, password: passwordController.text,);
-                                  }
+                            suffixIcon: IconButton(
+                              icon: Icon(
+                                isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+                                color: Colors.black,
+                              ),
+                              onPressed: () {
+                                setState(() {
+                                  isPasswordVisible = !isPasswordVisible;
+                                });
                               },
-                              minWidth: double.infinity,
-                              color: mainColor,
-                              textColor: Colors.white,
-                              child: FittedBox(fit:BoxFit.scaleDown,child: Text(state is LoginLoadingState ? "Loading..." : "Login",style: const TextStyle(fontWeight: FontWeight.bold,fontSize: 16.5),)),
                             ),
-                            SizedBox(height: 15,),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children:
-                              [
-                                const Text('Don\'t have an account? ',style: TextStyle(color: Colors.black)),
-                                SizedBox(width: 4,),
-                                InkWell(
-                                  onTap: ()
-                                  {
-                                    Navigator.push(context, MaterialPageRoute(builder: (context) => RegisterScreen()));
-                                  },
-                                  child: const Text('Create one',style: TextStyle(color: mainColor,fontWeight: FontWeight.bold)),
-                                )
-                              ],
-                            )
+                          ),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return "Please enter a password";
+                            } else if (value.length < 6) {
+                              return "Password must be at least 6 characters long";
+                            }
+                            return null;
+                          },
+                        ),
+                        SizedBox(height: MediaQuery.of(context).size.height / 18),
+
+                        Container(
+                          width: double.infinity,
+                          padding: EdgeInsets.symmetric(
+                            horizontal: MediaQuery.of(context).size.width / 8,
+                          ),
+                          child: TextButton(
+                            style: TextButton.styleFrom(
+                              backgroundColor: Colors.black,
+                              padding: const EdgeInsets.symmetric(vertical: 18),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                            ),
+                            onPressed: () => validateEmailAndPassword(authCubit),
+                            child: const Text(
+                              'Login',
+
+                              style: TextStyle(
+                                fontFamily:'Sevillana',
+                                fontSize: 30,
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ),
+
+                        SizedBox(height: 20),
+
+                        // Registration link
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Text("Don't have an account? "),
+                            InkWell(
+                              onTap: () {
+                                Navigator.push(context, MaterialPageRoute(builder: (context) => RegisterScreen()));
+                              },
+                              child: const Text("Register",style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold,
+                              ),),
+                            ),
                           ],
                         ),
-                      ),
+                      ],
                     ),
-                  ),
-                )
-              ],
-            );
-          },
-        )
+                  );
+                },
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

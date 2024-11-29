@@ -1,150 +1,307 @@
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:rive/rive.dart';
+import '../../../layout/layout_screen.dart';
 import '../../../shared/style/colors.dart';
 import '../../Widgets/alert_dialog.dart';
 import '../home_screen/home_screen.dart';
+import 'auth_cubit/animation_enum.dart';
 import 'auth_cubit/auth_cubit.dart';
 import 'auth_cubit/auth_states.dart';
 import 'login_screen.dart';
 
-class RegisterScreen extends StatelessWidget {
+class RegisterScreen extends StatefulWidget {
+  const RegisterScreen({super.key});
+
+  @override
+  State<RegisterScreen> createState() => _RegisterScreenState();
+}
+
+class _RegisterScreenState extends State<RegisterScreen> {
+  Artboard? riveArtboard;
+  late RiveAnimationController controllerIdle;
+  late RiveAnimationController controllerHandsUp;
+  late RiveAnimationController controllerHandsDown;
+  late RiveAnimationController controllerSuccess;
+  late RiveAnimationController controllerFail;
+
+  final nameController = TextEditingController();
   final emailController = TextEditingController();
   final phoneController = TextEditingController();
-  final nameController = TextEditingController();
   final passwordController = TextEditingController();
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
-  RegisterScreen({Key? key}) : super(key: key);
+
+  final passwordFocusNode = FocusNode();
+  bool _isPasswordVisible = false;
+
+  // Load Rive animation from assets
+  Future<void> loadRiveFileWithItsStates() async {
+    final data = await rootBundle.load('assets/login_animation.riv');
+    final file = RiveFile.import(data);
+    final artboard = file.mainArtboard;
+
+    // Add the controller for the idle animation
+    artboard.addController(controllerIdle);
+
+    setState(() {
+      riveArtboard = artboard;
+    });
+  }
+
+  // Validate form and register user
+  void validateFormAndRegister(AuthCubit authCubit) {
+    if (formKey.currentState!.validate()) {
+      authCubit.register(
+        name: nameController.text,
+        email: emailController.text,
+        phone: phoneController.text,
+        password: passwordController.text,
+      );
+    } else {
+      if (riveArtboard != null) {
+        // Play fail animation when form is invalid
+        riveArtboard?.artboard.addController(controllerFail);
+      }
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    controllerIdle = SimpleAnimation(AnimationEnum.idle.name);
+    controllerHandsUp = SimpleAnimation(AnimationEnum.Hands_up.name);
+    controllerHandsDown = SimpleAnimation(AnimationEnum.hands_down.name);
+    controllerSuccess = SimpleAnimation(AnimationEnum.success.name);
+    controllerFail = SimpleAnimation(AnimationEnum.fail.name);
+
+    loadRiveFileWithItsStates();
+  }
+
+  @override
+  void dispose() {
+    passwordFocusNode.dispose();
+    super.dispose();
+  }
+
+  // Check if phone number is valid Egyptian number (10 digits)
+  String? phoneValidator(String? value) {
+    if (value == null || value.isEmpty) {
+      return "Please enter your phone number";
+    }
+    final phonePattern = r"^(010|011|012|015)[0-9]{8}$";
+    final regExp = RegExp(phonePattern);
+    if (!regExp.hasMatch(value)) {
+      return "Invalid phone number. It should start with 010, 011, 012, or 015 and contain 10 digits.";
+    }
+    return null;
+  }
+
+  // Check if email is valid and not already used
+  String? emailValidator(String? value) {
+    if (value == null || value.isEmpty) {
+      return "Please enter your email address";
+    } else if (!value.contains('@gmail.com')) {
+      return "Please enter a valid email address (must be @gmail.com)";
+    }
+    // Assuming email existence check is done in the API or backend
+    return null;
+  }
+
+  // Check if password is valid (at least 6 characters)
+  String? passwordValidator(String? value) {
+    if (value == null || value.isEmpty) {
+      return "Please enter your password";
+    } else if (value.length < 6) {
+      return "Password must be at least 6 characters long";
+    }
+    return null;
+  }
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<AuthCubit,AuthStates>(
-      listener: (context,state){
-        if( state is RegisterLoadingState )
-        {
-          showAlertDialog(
-              context: context,
-              backgroundColor: Colors.white,
-              content: AnimatedContainer(
-                duration: const Duration(seconds: 1),
-                curve: Curves.easeIn,
-                child: Row(
-                  children:
-                  [
-                    const CupertinoActivityIndicator(color: mainColor),
-                    SizedBox(width: 12.5,),
-                    const Text("wait",style: TextStyle(fontWeight: FontWeight.w500),),
-                  ],
-                ),
-              )
-          );
-        }
-        else if( state is FailedToRegisterState )
-        {
-          showAlertDialog(
-              context: context,
-              backgroundColor: Colors.red,
-              content: Text(state.message,textDirection: TextDirection.rtl,)
-          );
-        }
-        else if ( state is RegisterSuccessState )
-        {
-          Navigator.pop(context);   // عشان يخرج من alertDialog
-          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=> HomeScreen()));
-        }
-      },
-      builder: (context,state){
-        return Scaffold(
-          appBar: AppBar(backgroundColor: Colors.transparent,elevation: 0,leading: const Text(""),),
-          body: Center(
-            child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Form(
-                  key: formKey,
-                  child: SingleChildScrollView(
+    final authCubit = BlocProvider.of<AuthCubit>(context);
+
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: EdgeInsets.symmetric(
+            horizontal: MediaQuery.of(context).size.width / 15,
+          ),
+          child: Column(
+            children: [
+              SizedBox(
+                height: MediaQuery.of(context).size.height / 3,
+                child: riveArtboard == null
+                    ? const SizedBox.shrink()
+                    : Rive(artboard: riveArtboard!),
+              ),
+              BlocConsumer<AuthCubit, AuthStates>(
+                listener: (context, state) {
+                  if (state is RegisterSuccessState) {
+                    if (riveArtboard != null) {
+                      riveArtboard?.artboard.addController(controllerSuccess);
+                    }
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (context) => LayoutScreen()),
+                    );
+                  } else if (state is FailedToRegisterState) {
+                    if (riveArtboard != null) {
+                      riveArtboard?.artboard.addController(controllerFail);
+                    }
+                  }
+                },
+                builder: (context, state) {
+                  return Form(
+                    key: formKey,
                     child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children:
-                      [
-                        Text("Sign Up",style: TextStyle(fontSize: 22.5,fontWeight: FontWeight.bold),),
-                        SizedBox(height: 30,),
-                        textFormItem(hintTitle: "User Name", controller: nameController),
-                        SizedBox(height: 20,),
-                        textFormItem(hintTitle: "Email", controller: emailController),
-                        SizedBox(height: 20,),
-                        textFormItem(hintTitle: "Phone", controller: phoneController),
-                        SizedBox(height: 20,),
-                        textFormItem(hintTitle: "Password", controller: passwordController),
-                        SizedBox(height: 20,),
-                        MaterialButton(
-                          minWidth: double.infinity,
-                          elevation: 0,
-                          height: 40,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(4)
+                      children: [
+                        TextFormField(
+                          controller: nameController,
+                          decoration: InputDecoration(
+                            labelText: "Full Name",
+                            labelStyle: TextStyle(color: Colors.black),
+                            prefixIcon: Icon(Icons.person, color: Colors.black),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10.0),
+                              borderSide: BorderSide(color: Colors.black),
+                            ),
                           ),
-                          color: mainColor,
-                          onPressed: ()
-                          {
-                            if( formKey.currentState!.validate() == true )
-                            {
-                              BlocProvider.of<AuthCubit>(context).register(
-                                  email: emailController.text,
-                                  name: nameController.text,
-                                  phone: phoneController.text,
-                                  password: passwordController.text
-                              );
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return "Please enter your name";
                             }
+                            return null;
                           },
-                          child: FittedBox(fit:BoxFit.scaleDown,child: Text(state is RegisterLoadingState ? "Loading..." : "Register",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 16.5,color: Colors.white),)),
                         ),
-                        SizedBox(height: 20,),
+                        SizedBox(height: MediaQuery.of(context).size.height / 30),
+                        TextFormField(
+                          keyboardType: TextInputType.emailAddress,
+                          controller: emailController,
+                          decoration: InputDecoration(
+                            labelText: "Email",
+                            labelStyle: TextStyle(color: Colors.black),
+                            prefixIcon: Icon(Icons.email, color: Colors.black),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10.0),
+                              borderSide: BorderSide(color: Colors.black),
+                            ),
+                          ),
+                          validator: emailValidator,
+                        ),
+                        SizedBox(height: MediaQuery.of(context).size.height / 30),
+                        TextFormField(
+                          keyboardType: TextInputType.phone,
+                          controller: phoneController,
+                          decoration: InputDecoration(
+                            labelText: "Phone Number",
+                            labelStyle: TextStyle(color: Colors.black),
+                            prefixIcon: Icon(Icons.phone, color: Colors.black),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10.0),
+                              borderSide: BorderSide(color: Colors.black),
+                            ),
+                          ),
+                          validator: phoneValidator,
+                        ),
+                        SizedBox(height: MediaQuery.of(context).size.height / 30),
+                        TextFormField(
+                          controller: passwordController,
+                          obscureText: !_isPasswordVisible,
+                          focusNode: passwordFocusNode,
+                          decoration: InputDecoration(
+                            labelText: "Password",
+                            labelStyle: TextStyle(color: Colors.black),
+                            prefixIcon: Icon(Icons.lock, color: Colors.black),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10.0),
+                              borderSide: BorderSide(color: Colors.black),
+                            ),
+                            suffixIcon: IconButton(
+                              icon: Icon(
+                                _isPasswordVisible
+                                    ? Icons.visibility
+                                    : Icons.visibility_off,
+                                color: Colors.black,
+                              ),
+                              onPressed: () {
+                                setState(() {
+                                  _isPasswordVisible = !_isPasswordVisible;
+                                  if (riveArtboard != null) {
+                                    // Play animation when password visibility changes
+                                    riveArtboard?.artboard.addController(controllerHandsUp);
+                                  }
+                                });
+                              },
+                            ),
+                          ),
+                          validator: passwordValidator,
+                        ),
+                        SizedBox(height: MediaQuery.of(context).size.height / 30),
+                        Container(
+                          width: double.infinity,
+                          padding: EdgeInsets.symmetric(
+                            horizontal: MediaQuery.of(context).size.width / 8,
+                          ),
+                          child: TextButton(
+                            style: TextButton.styleFrom(
+                              backgroundColor: Colors.black,
+                              padding: const EdgeInsets.symmetric(vertical: 18),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                            ),
+                            onPressed: () {
+                              validateFormAndRegister(authCubit);
+                            },
+                            child: Text(
+                              "Register",
+                              style: TextStyle(
+                                fontFamily: 'Sevillana',
+                                fontSize: 30,
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: MediaQuery.of(context).size.height / 30),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
-                          children:
-                          [
-                            const Text('Already have an account? ',style: TextStyle(color: Colors.black)),
-                            SizedBox(width: 4,),
+                          children: [
+                            const Text('Already have an account? '),
                             InkWell(
-                              onTap: ()
-                              {
-                                Navigator.push(context, MaterialPageRoute(builder: (context) => LoginScreen()));
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => const LoginScreen(),
+                                  ),
+                                );
                               },
-                              child: const Text('login in',style: TextStyle(color: mainColor,fontWeight: FontWeight.bold)),
-                            )
+                              child: const Text(
+                                'Login',
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
                           ],
-                        )
+                        ),
                       ],
                     ),
-                  ),
-                )
-            ),
+                  );
+                },
+              ),
+            ],
           ),
-        );
-      },
-    );
-  }
-
-  // TextFormField Item as I use it more than one time
-  Widget textFormItem({required String hintTitle,required TextEditingController controller}){
-    return TextFormField(
-      controller: controller,
-      decoration: InputDecoration(
-          hintText: hintTitle,
-          border: const OutlineInputBorder()
+        ),
       ),
-      validator: (input)
-      {
-        if( controller.text.isNotEmpty )
-        {
-          return null;
-        }
-        else
-        {
-          return "$hintTitle must not be empty!";
-        }
-      },
     );
   }
 }

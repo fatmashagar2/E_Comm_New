@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
+import 'package:untitled15/modules/Screens/auth_screens/login_screen.dart';
 import 'package:untitled15/modules/Screens/profile_screen/profile_screen.dart';
 import '../shared/style/colors.dart';
 import 'layout_cubit/layout_cubit.dart';
@@ -23,9 +24,12 @@ class LayoutScreen extends StatelessWidget {
             actions: [
               InkWell(
                   onTap: (){
-                    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>ProfileScreen()));
+                    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>LoginScreen()));
                   },
-                  child: Image.asset('assets/images/profile.gif')
+                  child: Padding(
+                    padding: const EdgeInsets.only(right: 12),
+                    child: Image.asset('assets/images/exit.png',width: 48,height: 48,),
+                  )
 
               )
             ],
