@@ -7,6 +7,7 @@ import 'package:untitled15/modules/Screens/profile_screen/profile_screen.dart';
 import '../shared/style/colors.dart';
 import 'layout_cubit/layout_cubit.dart';
 import 'layout_cubit/layout_states.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 
 class LayoutScreen extends StatelessWidget {
   const LayoutScreen({super.key});
@@ -46,7 +47,33 @@ class LayoutScreen extends StatelessWidget {
               width: 50,
             ),
           ),
-          body: cubit.layoutScreens[cubit.bottomNavIndex],
+          body: StreamBuilder<ConnectivityResult>(
+            stream: Connectivity().onConnectivityChanged,
+            builder: (context, snapshot) {
+
+              // إذا كان لا يوجد اتصال
+              if (snapshot.hasData && snapshot.data == ConnectivityResult.none||snapshot.connectionState == ConnectionState.waiting) {
+                return Scaffold(
+                  backgroundColor: Color(0xffFBF8FB),
+                  body: Center(
+
+                    child: Image.asset(
+                      "assets/images/noo_connection.gif",
+
+                    ),
+                  ),
+                );
+              }
+
+              // إذا كان هناك اتصال
+              if (snapshot.hasData && snapshot.data != ConnectivityResult.none) {
+                return cubit.layoutScreens[cubit.bottomNavIndex];
+              }
+
+              // في حال لم يتم الحصول على بيانات من الاتصال
+              return Center(child: Text('خطأ في الحصول على حالة الاتصال'));
+            },
+          ),
           bottomNavigationBar: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 10),
             child: GNav(
@@ -69,7 +96,7 @@ class LayoutScreen extends StatelessWidget {
                 GButton(
                   icon: Icons.favorite,
                   text: "Favorites",
-                  iconColor: cubit.favoriteItemCount > 0 ? mainColor : Colors.grey, // Change color based on count
+                  iconColor: cubit.favoriteItemCount > 0 ? mainColor : Colors.grey,
                   leading: cubit.favoriteItemCount > 0
                       ? Stack(
                     clipBehavior: Clip.none,
@@ -92,12 +119,12 @@ class LayoutScreen extends StatelessWidget {
                       ),
                     ],
                   )
-                      : null, // Show item count if favorites are not empty
+                      : null,
                 ),
                 GButton(
                   icon: Icons.shopping_cart,
                   text: "Cart",
-                  iconColor: cubit.cartItemCount > 0 ? mainColor : Colors.grey, // Change color based on count
+                  iconColor: cubit.cartItemCount > 0 ? mainColor : Colors.grey,
                   leading: cubit.cartItemCount > 0
                       ? Stack(
                     clipBehavior: Clip.none,
@@ -120,7 +147,7 @@ class LayoutScreen extends StatelessWidget {
                       ),
                     ],
                   )
-                      : null, // Show item count if cart is not empty
+                      : null,
                 ),
                 GButton(
                   icon: Icons.person,

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rive/rive.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../../layout/layout_screen.dart';  // The page you navigate to after success
 import '../../../modules/Screens/auth_screens/register_screen.dart';  // Registration page
 import 'auth_cubit/animation_enum.dart';
@@ -81,7 +82,15 @@ class _LoginScreenState extends State<LoginScreen> {
     loadRiveFileWithItsStates();
     checkForPasswordFocusNodeToChangeAnimationState();
   }
-
+  Future<void> _login() async {
+    final prefs = await SharedPreferences.getInstance();
+    // Add login validation and API call here.
+    await prefs.setBool('logged_in', true);  // Simulate login success
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (_) => const LayoutScreen()),
+    );
+  }
   void loadRiveFileWithItsStates() {
     rootBundle.load('assets/login_animation.riv').then(
           (data) {

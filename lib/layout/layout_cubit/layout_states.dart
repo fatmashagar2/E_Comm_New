@@ -32,8 +32,13 @@ class GetFavoritesSuccessState extends LayoutStates {}
 class FailedToGetFavoritesState extends LayoutStates {}
 
 class AddOrRemoveItemFromFavoritesSuccessState extends LayoutStates {}
+class AddOrRemoveItemFromFavoritesLoadingState extends LayoutStates {}
 
-class FailedToAddOrRemoveItemFromFavoritesState extends LayoutStates {}
+class FailedToAddOrRemoveItemFromFavoritesState extends LayoutStates {
+  final String error;
+
+  FailedToAddOrRemoveItemFromFavoritesState({required this.error});
+}
 
 class GetCartsSuccessState extends LayoutStates {}
 

@@ -122,7 +122,10 @@ class LayoutCubit extends Cubit<LayoutStates> {
   }
 
   List<ProductModel> favorites = [];
-  Set<String> favoritesID = {};
+  List<String> get FavoritesIds {
+    return favorites.map((product) => product.id.toString()).toList();
+  }
+
 
   Future<void> getFavorites() async {
     favorites.clear();
@@ -137,7 +140,7 @@ class LayoutCubit extends Cubit<LayoutStates> {
     if (responseBody['status'] == true) {
       for (var item in responseBody['data']['data']) {
         favorites.add(ProductModel.fromJson(data: item['product']));
-        favoritesID.add(item['product']['id'].toString());
+        FavoritesIds.add(item['product']['id'].toString());
       }
       emit(GetFavoritesSuccessState());
     } else {
@@ -146,54 +149,6 @@ class LayoutCubit extends Cubit<LayoutStates> {
   }
 
   int favoriteItemCount = 0;
-
-  Future<void> addOrRemoveFromFavorites({required String productID}) async {
-    try {
-      // هنا يمكنك تعديل حالة البداية إن كنت تحتاج
-      // emit(AddOrRemoveFromFavoritesLoadingState());
-
-      if (userToken == null || userToken!.isEmpty) {
-        // حالة في حال عدم وجود توكن المستخدم
-        // emit(FailedToAddOrRemoveFromFavoritesState('User token is missing.'));
-        return;
-      }
-
-      // طلب إضافة أو إزالة المنتج من المفضلة
-      Response response = await http.post(
-        Uri.parse("https://student.valuxapps.com/api/favorites"),
-        headers: {
-          "Authorization": userToken!,
-          "lang": "en",
-        },
-        body: {
-          "product_id": productID,
-        },
-      );
-
-      var responseBody = jsonDecode(response.body);
-
-      if (responseBody['status'] == true) {
-        // إضافة أو إزالة المنتج من المفضلة
-        if (favorites.any((product) => product.id.toString() == productID)) {
-          favorites.removeWhere((product) => product.id.toString() == productID);
-        } else {
-          ProductModel product = await getProductById(productID); // استرجاع المنتج من خلال الـ ID
-          favorites.add(product);
-        }
-
-        // تحديث عداد المفضلة
-        favoriteItemCount = favorites.length;
-
-        // emit(AddOrRemoveFromFavoritesSuccessState());
-      } else {
-        // emit(FailedToAddOrRemoveFromFavoritesState(responseBody['message']));
-      }
-    } catch (e) {
-      // التعامل مع الأخطاء
-      // emit(FailedToAddOrRemoveFromFavoritesState(e.toString()));
-    }
-  }
-
 
   int totalPrice = 0;
 
@@ -292,6 +247,57 @@ class LayoutCubit extends Cubit<LayoutStates> {
       emit(FailedToAddOrRemoveFromCartState(e.toString()));
     }
   }
+
+  Future<void> addOrRemoveFromFavorites({required String productID}) async {
+    try {
+      // بدأ حالة التحميل (اختياري)
+      emit(AddOrRemoveItemFromFavoritesLoadingState());
+
+      if (userToken == null || userToken!.isEmpty) {
+        emit(FailedToAddOrRemoveItemFromFavoritesState(error: 'User not authenticated'));
+        return;
+      }
+
+      Response response = await http.post(
+        Uri.parse("https://student.valuxapps.com/api/favorites"),
+        headers: {
+          "Authorization": userToken!,
+          "lang": "en",
+        },
+        body: {
+          "product_id": productID,
+        },
+      );
+
+      // تحقق من حالة الاستجابة
+      if (response.statusCode == 200) {
+        var responseBody = jsonDecode(response.body);
+
+        if (responseBody['status'] == true) {
+          // إضافة أو إزالة المنتج من المفضلة
+          if (favorites.any((product) => product.id.toString() == productID)) {
+            favorites.removeWhere((product) => product.id.toString() == productID);
+          } else {
+            ProductModel product = await getProductById(productID);
+            favorites.add(product);
+          }
+
+          // تحديث عدد العناصر في المفضلة
+          favoriteItemCount = favorites.length;
+
+          // إظهار الحالة الناجحة بعد إضافة أو إزالة المنتج
+          emit(AddOrRemoveItemFromFavoritesSuccessState());
+        } else {
+          emit(FailedToAddOrRemoveItemFromFavoritesState(error: responseBody['message'] ?? 'Unknown error'));
+        }
+      } else {
+        emit(FailedToAddOrRemoveItemFromFavoritesState(error: 'Failed to connect to server'));
+      }
+    } catch (e) {
+      emit(FailedToAddOrRemoveItemFromFavoritesState(error: 'Error: $e'));
+    }
+  }
+
   Future<ProductModel> getProductById(String productID) async {
     Response response = await http.get(
         Uri.parse("https://student.valuxapps.com/api/products/$productID"),

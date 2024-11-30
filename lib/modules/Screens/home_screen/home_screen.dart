@@ -116,7 +116,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       style: TextStyle(
                           color: Colors.black,
                           fontSize: 25,
-                        fontFamily: 'Sevillana',
+                          fontFamily: 'Sevillana',
                           fontWeight: FontWeight.bold),
                     ),
                     Text(
@@ -212,8 +212,8 @@ Widget _productItem({
                       child: Text(
                         "${model.price!}\$ ",
                         style: const TextStyle(fontSize: 15,
-                        fontWeight: FontWeight.bold,
-                        fontFamily: 'Playfair_Display'
+                            fontWeight: FontWeight.bold,
+                            fontFamily: 'Playfair_Display'
                         ),
                       ),
                     ),
@@ -244,7 +244,7 @@ Widget _productItem({
                 child: Icon(
                   Icons.favorite,
                   size: 20,
-                  color: cubit.favoritesID.contains(model.id.toString())
+                  color: cubit.FavoritesIds.contains(model.id.toString())
                       ? Colors.red
                       : Colors.grey,
                 ),
@@ -263,8 +263,8 @@ Widget _productItem({
                   Icons.shopping_cart,
                   size: 20,
                   color: cubit.cartIDs.contains(model.id.toString())
-                      ? Colors.green // إذا كان المنتج في السلة، اجعل اللون أخضر
-                      : Colors.grey, // إذا لم يكن في السلة، اجعل اللون رمادي
+                      ? Colors.green  // إذا كان المنتج في السلة، اجعل اللون أخضر
+                      : Colors.grey,  // إذا لم يكن في السلة، اجعل اللون رمادي
                 ),
                 onTap: () async {
                   // تشغيل الصوت عند الضغط
@@ -275,9 +275,11 @@ Widget _productItem({
                     print("Error playing sound: $e");
                   }
 
+                  // إضافة أو إزالة من العربة بشكل مستقل
                   cubit.addOrRemoveFromCart(productID: model.id.toString());
                 },
               ),
+
             ],
           ),
         ],
@@ -285,4 +287,3 @@ Widget _productItem({
     ),
   );
 }
-

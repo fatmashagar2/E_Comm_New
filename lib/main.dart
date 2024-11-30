@@ -1,16 +1,20 @@
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:path_provider/path_provider.dart'; // تأكد من استيراد الحزمة هنا
+import 'package:path_provider/path_provider.dart';
+import 'package:untitled15/modules/Screens/on_boarding/on_boarding_screens.dart';
 import 'package:untitled15/shared/constants/constants.dart';
 import 'package:untitled15/shared/network/local_network.dart';
 import 'layout/layout_cubit/layout_cubit.dart';
 import 'layout/layout_screen.dart';
 import 'modules/Screens/auth_screens/auth_cubit/auth_cubit.dart';
 import 'modules/Screens/auth_screens/login_screen.dart';
+
+import 'modules/Screens/splash_screen/splash_screen.dart';
 import 'shared/bloc_observer/bloc_observer.dart';
-import 'dart:io'; // لاستعمال File في حفظ الصورة
+import 'dart:io';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -30,13 +34,38 @@ Future<void> main() async {
   debugPrint("Current Password is : $currentPassword");
 
   // تهيئة Hive
-  final appDocumentDir = await getApplicationDocumentsDirectory(); // تأكد من استخدام هذه الدالة بعد استيراد الحزمة
+  final appDocumentDir = await getApplicationDocumentsDirectory();
   Hive.init(appDocumentDir.path);
 
   // فتح الـ box الخاص بالصور أو البيانات التي تريد تخزينها
-  await Hive.openBox<String>('imageBox'); // يمكنك تغيير 'imageBox' إلى اسم الـ box الذي تود استخدامه
+  await Hive.openBox<String>('imageBox');
+
+  // التحقق من الاتصال بالشبكة
+  var connectivityResult = await (Connectivity().checkConnectivity());
+  if (connectivityResult == ConnectivityResult.none) {
+    // في حالة عدم وجود اتصال بالشبكة
+    debugPrint("No network connection");
+  } else {
+    // التحقق من الاتصال بالإنترنت الفعلي
+    bool isConnected = await _isInternetConnected();
+    if (isConnected) {
+      debugPrint("Connected to the internet");
+    } else {
+      debugPrint("No internet connection");
+    }
+  }
 
   runApp(const MyApp());
+}
+
+// التحقق من الوصول إلى الإنترنت
+Future<bool> _isInternetConnected() async {
+  try {
+    final result = await InternetAddress.lookup('google.com');
+    return result.isNotEmpty && result[0].rawAddress.isNotEmpty;
+  } on SocketException catch (_) {
+    return false;
+  }
 }
 
 class MyApp extends StatelessWidget {
@@ -57,7 +86,8 @@ class MyApp extends StatelessWidget {
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        home: userToken != null ? const LayoutScreen() : LoginScreen(),
+        home:SplashScreen()
+       // userToken != null ? const SplashScreen() : LoginScreen(),
       ),
     );
   }

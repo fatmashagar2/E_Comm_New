@@ -54,6 +54,9 @@ dependencies:
   audioplayers: ^6.1.0
   image_picker: ^1.1.2
   path_provider: ^2.1.5
+  connectivity_plus: ^5.0.0
+  internet_connection_checker: ^1.0.0+1
+  flame: ^1.22.0
 
 dev_dependencies:
   flutter_launcher_icons: ^0.10.0
@@ -91,6 +94,7 @@ flutter:
     - assets/
     - assets/images/
     - assets/sounds/
+    - assets/images/cat.png
   # assets:
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
