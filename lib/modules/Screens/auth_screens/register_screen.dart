@@ -287,9 +287,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   ),
                                 );
                               },
-                              child: const Text(
+                              child:  Text(
                                 'Login',
                                 style: TextStyle(
+                                  fontFamily:'Sevillana',
+                                  fontSize: 20.sp,
                                   color: Colors.black,
                                   fontWeight: FontWeight.bold,
                                 ),

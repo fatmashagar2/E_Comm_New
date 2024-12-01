@@ -5,11 +5,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:untitled15/layout/layout_screen.dart';
+import 'package:untitled15/modules/Screens/details/details_screen.dart';
 import '../../../layout/layout_cubit/layout_cubit.dart';
 import '../../../layout/layout_cubit/layout_states.dart';
 import '../../../models/product_model.dart';
 import '../../../shared/style/colors.dart';
-
 
 class HomeScreen extends StatefulWidget {
   HomeScreen({Key? key}) : super(key: key);
@@ -36,16 +36,14 @@ class _HomeScreenState extends State<HomeScreen> {
       listener: (context, state) {},
       builder: (context, state) {
         return Scaffold(
-
           backgroundColor: fifthColor,
           body: Padding(
-            padding:  EdgeInsets.symmetric(vertical: 18.0.h, horizontal: 15.w),
+            padding: EdgeInsets.symmetric(vertical: 18.0.h, horizontal: 15.w),
             child: ListView(
               shrinkWrap: true,
               children: [
                 Container(
-                  decoration:
-                  BoxDecoration(
+                  decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(20.r),
                     border: Border.all(color: Colors.black, width: 2.w),
@@ -82,9 +80,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                 ),
-
-                 SizedBox(height: 20.h),
-                // Improved Banners Section
+                SizedBox(height: 20.h),
+                // Banners Section
                 cubit.banners.isEmpty
                     ? const Center(
                   child: CupertinoActivityIndicator(),
@@ -109,32 +106,44 @@ class _HomeScreenState extends State<HomeScreen> {
                     autoPlayInterval: const Duration(seconds: 3),
                   ),
                 ),
-                 SizedBox(height: 20.h),
+                SizedBox(height: 20.h),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
                       "Products",
                       style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 25.sp,
-                          fontFamily: 'Sevillana',
-                          fontWeight: FontWeight.bold),
+                        color: Colors.black,
+                        fontSize: 25.sp,
+                        fontFamily: 'Sevillana',
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     Text(
                       "View all",
                       style: TextStyle(
-                          color: secondColor,
-                          fontSize: 14.sp,
-                          fontFamily: 'Sevillana',
-                          fontWeight: FontWeight.bold),
+                        color: secondColor,
+                        fontSize: 14.sp,
+                        fontFamily: 'Sevillana',
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ],
                 ),
-                 SizedBox(height: 15.h),
+                SizedBox(height: 15.h),
+                // Display placeholder image if no products match the search query
                 cubit.products.isEmpty
                     ? const Center(
                   child: CupertinoActivityIndicator(),
+                )
+                    : cubit.filteredProducts.isEmpty && _searchQuery.isNotEmpty
+                    ? Center(
+                  child:
+                  Image.asset(
+                    'assets/images/Animation - 1726003349817.gif', // Add your no-results image here
+                    height: 200.h,
+                    width: 200.w,
+                  ),
                 )
                     : GridView.builder(
                   itemCount: cubit.filteredProducts.isEmpty
@@ -143,7 +152,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
                   gridDelegate:
-                   SliverGridDelegateWithFixedCrossAxisCount(
+                  SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 2,
                       mainAxisSpacing: 12.w,
                       crossAxisSpacing: 15.h,
@@ -154,7 +163,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           ? cubit.products[index]
                           : cubit.filteredProducts[index],
                       cubit: cubit,
-                      context: context, // Pass context here
+                      context: context,
                     );
                   },
                 ),
@@ -172,120 +181,133 @@ Widget _productItem({
   required LayoutCubit cubit,
   required BuildContext context,
 }) {
-  return Card(
-    color: Colors.white,
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(8),
-    ),
-    elevation: 30,
-    margin:  EdgeInsets.symmetric(vertical: 10.h, horizontal: 12.w),
-    child: Padding(
-      padding:  EdgeInsets.symmetric(vertical: 20.h, horizontal: 12.w),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Expanded(
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(8),
-              child: Image.network(
-                model.image!,
-                fit: BoxFit.fill,
-                width: double.infinity,
-                height: double.infinity,
+  return GestureDetector(
+    onTap: () {
+      // عند الضغط على العنصر، ننتقل إلى صفحة التفاصيل
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => DetailsScreen(product: model),
+        ),
+      );
+    },
+    child: Card(
+      color: Colors.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8),
+      ),
+      elevation: 30,
+      margin: EdgeInsets.symmetric(vertical: 10.h, horizontal: 12.w),
+      child: Padding(
+        padding: EdgeInsets.symmetric(vertical: 20.h, horizontal: 12.w),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: Image.network(
+                  model.image!,
+                  fit: BoxFit.fill,
+                  width: double.infinity,
+                  height: double.infinity,
+                ),
               ),
             ),
-          ),
-           SizedBox(height: 5.h),
-          Text(
-            model.name!,
-            style:  TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 16.sp,
-                overflow: TextOverflow.ellipsis),
-          ),
-           SizedBox(height: 2.h),
-          Row(
-            children: [
-              Expanded(
-                child: Row(
-                  children: [
-                    FittedBox(
-                      fit: BoxFit.scaleDown,
-                      child: Text(
-                        "${model.price!}\$ ",
-                        style:  TextStyle(fontSize: 15.sp,
+            SizedBox(height: 5.h),
+            Text(
+              model.name!,
+              style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16.sp,
+                  overflow: TextOverflow.ellipsis),
+            ),
+            SizedBox(height: 2.h),
+            Row(
+              children: [
+                Expanded(
+                  child: Row(
+                    children: [
+                      FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: Text(
+                          "${model.price!}\$ ",
+                          style: TextStyle(
+                            fontSize: 15.sp,
                             fontWeight: FontWeight.bold,
-                            fontFamily: 'Playfair_Display'
+                            fontFamily: 'Playfair_Display',
+                          ),
                         ),
                       ),
-                    ),
-
-                    FittedBox(
-                      fit: BoxFit.scaleDown,
-                      child: Text(
-                        "${model.oldPrice!}\$",
-                        style:  TextStyle(
+                      FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: Text(
+                          "${model.oldPrice!}\$",
+                          style: TextStyle(
                             color: Colors.grey,
                             fontSize: 12.sp,
                             fontFamily: 'Playfair_Display',
                             fontWeight: FontWeight.bold,
-                            decoration: TextDecoration.lineThrough),
+                            decoration: TextDecoration.lineThrough,
+                          ),
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-            ],
-          ),
-           SizedBox(height: 10.h),
-          // Icons row at the bottom
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              GestureDetector(
-                child: Icon(
-                  Icons.favorite,
-                  size: 20.h,
-                  color: cubit.FavoritesIds.contains(model.id.toString())
-                      ? Colors.red
-                      : Colors.grey,
+              ],
+            ),
+            SizedBox(height: 10.h),
+            // Icons row at the bottom
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                GestureDetector(
+                  child: Icon(
+                    Icons.favorite,
+                    size: 20.h,
+                    color: cubit.FavoritesIds.contains(model.id.toString())
+                        ? Colors.red
+                        : Colors.grey,
+                  ),
+                  onTap: () async {
+                    final AudioPlayer audioPlayer = AudioPlayer();
+                    try {
+                      await audioPlayer.play(AssetSource('sounds/sound2.mp3'));
+                    } catch (e) {
+                      print("Error playing sound: $e");
+                    }
+                    cubit.addOrRemoveFromFavorites(productID: model.id.toString());
+                  },
                 ),
-                onTap: () async {
-                  final AudioPlayer audioPlayer = AudioPlayer();
-                  try {
-                    await audioPlayer.play(AssetSource('sounds/sound2.mp3'));
-                  } catch (e) {
-                    print("Error playing sound: $e");
-                  }
-                  cubit.addOrRemoveFromFavorites(productID: model.id.toString());
-                },
-              ),
-              GestureDetector(
-                child: Icon(
-                  Icons.shopping_cart,
-                  size: 20.h,
-                  color: cubit.cartIDs.contains(model.id.toString())
-                      ? Colors.green  // إذا كان المنتج في السلة، اجعل اللون أخضر
-                      : Colors.grey,  // إذا لم يكن في السلة، اجعل اللون رمادي
-                ),
-                onTap: () async {
-                  // تشغيل الصوت عند الضغط
-                  final AudioPlayer audioPlayer = AudioPlayer();
-                  try {
-                    await audioPlayer.play(AssetSource('sounds/sound1.mp3'));
-                  } catch (e) {
-                    print("Error playing sound: $e");
-                  }
+                GestureDetector(
+                  child: Icon(
+                    Icons.shopping_cart,
+                    size: 20.h,
+                    color: cubit.cartIDs.contains(model.id.toString())
+                        ? Colors.green // إذا كان المنتج في السلة، اجعل اللون أخضر
+                        : Colors.grey, // إذا لم يكن في السلة، اجعل اللون رمادي
+                  ),
+                  onTap: () async {
+                    // تشغيل الصوت عند الضغط
+                    final AudioPlayer audioPlayer = AudioPlayer();
+                    try {
+                      await audioPlayer.play(AssetSource('sounds/sound1.mp3'));
+                    } catch (e) {
+                      print("Error playing sound: $e");
+                    }
 
-                  // إضافة أو إزالة من العربة بشكل مستقل
-                  cubit.addOrRemoveFromCart(productID: model.id.toString());
-                },
-              ),
-
-            ],
-          ),
-        ],
+                    // إضافة أو إزالة من العربة بشكل مستقل
+                    cubit.addOrRemoveFromCart(productID: model.id.toString());
+                  },
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     ),
   );
 }
+
+

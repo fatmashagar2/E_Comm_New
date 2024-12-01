@@ -3,7 +3,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:untitled15/modules/Screens/auth_screens/login_screen.dart';
-import '../../../layout/layout_screen.dart';
 
 class OnboardingScreen extends StatefulWidget {
   @override
@@ -30,7 +29,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding:  EdgeInsets.all(16.0.h),
         child: Column(
           children: [
             Expanded(
@@ -71,17 +70,22 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       MaterialPageRoute(builder: (_) => LoginScreen()),
                     );
                   },
-                  child: Text('Skip'),
+                  child: Text('Skip',style:TextStyle(
+                    fontFamily:'Sevillana',
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                      fontSize: 25.sp
+                  )),
                 ),
                 SmoothPageIndicator(
                   controller: _pageController,
                   count: 3,
-                  effect: ExpandingDotsEffect(
+                  effect: SwapEffect(
                     dotColor: Colors.grey,
-                    activeDotColor: Colors.blue,
-                    dotHeight: 12.h,  // حجم النقاط
-                    dotWidth: 12.w,   // عرض النقاط
-                    spacing: 16.w,     // المسافة بين النقاط
+                    activeDotColor: Colors.black,
+                    dotHeight: 12.h, // حجم النقاط
+                    dotWidth: 12.w,  // عرض النقاط
+                    spacing: 16.w,  // المسافة بين النقاط
                   ),
                 ),
                 TextButton(
@@ -99,7 +103,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       );
                     }
                   },
-                  child: Text(isLastPage ? 'Done' : 'Next'),
+                  child: Text(isLastPage ? 'Done' : 'Next',style:TextStyle(
+                    fontFamily:'Sevillana',
+                      color: Colors.black,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 25.sp
+
+                  )),
                 ),
               ],
             ),

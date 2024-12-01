@@ -1,3 +1,4 @@
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -27,7 +28,7 @@ class CartScreen extends StatelessWidget {
           }
 
           return Padding(
-            padding:  EdgeInsets.symmetric(horizontal: 12.0.w, vertical: 10.h),
+            padding: EdgeInsets.symmetric(horizontal: 12.0.w, vertical: 10.h),
             child: Column(
               children: [
                 Expanded(
@@ -35,7 +36,7 @@ class CartScreen extends StatelessWidget {
                       ? ListView.separated(
                     itemCount: cubit.carts.length,
                     separatorBuilder: (context, index) {
-                      return  SizedBox(height: 12.h);
+                      return SizedBox(height: 12.h);
                     },
                     itemBuilder: (context, index) {
                       return Card(
@@ -44,9 +45,11 @@ class CartScreen extends StatelessWidget {
                           borderRadius: BorderRadius.circular(8.r),
                         ),
                         elevation: 30,
-                        margin:  EdgeInsets.symmetric(vertical: 10.h, horizontal: 12.w),
+                        margin: EdgeInsets.symmetric(
+                            vertical: 10.h, horizontal: 12.w),
                         child: Padding(
-                          padding:  EdgeInsets.symmetric(vertical: 20.h, horizontal: 12.w),
+                          padding: EdgeInsets.symmetric(
+                              vertical: 20.h, horizontal: 12.w),
                           child: Row(
                             children: [
                               ClipRRect(
@@ -58,10 +61,11 @@ class CartScreen extends StatelessWidget {
                                   width: 100.w,
                                 ),
                               ),
-                               SizedBox(width: 12.5.w),
+                              SizedBox(width: 12.5.w),
                               Expanded(
                                 child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  crossAxisAlignment:
+                                  CrossAxisAlignment.start,
                                   children: [
                                     Text(
                                       cubit.carts[index].name!,
@@ -72,26 +76,38 @@ class CartScreen extends StatelessWidget {
                                         overflow: TextOverflow.ellipsis,
                                       ),
                                     ),
-                                     SizedBox(height: 5.h),
+                                    SizedBox(height: 5.h),
                                     Row(
                                       children: [
                                         Text("${cubit.carts[index].price!} \$"),
-                                         SizedBox(width: 5.w),
-                                        if (cubit.carts[index].price != cubit.carts[index].oldPrice)
+                                        SizedBox(width: 5.w),
+                                        if (cubit.carts[index].price !=
+                                            cubit.carts[index].oldPrice)
                                           Text(
                                             "${cubit.carts[index].oldPrice!} \$",
-                                            style:  TextStyle(
+                                            style: TextStyle(
                                               color: Colors.grey,
                                               fontSize: 12.sp,
-                                              decoration: TextDecoration.lineThrough,
+                                              decoration:
+                                              TextDecoration.lineThrough,
                                             ),
                                           ),
                                       ],
                                     ),
-                                     SizedBox(height: 10.h),
+                                    SizedBox(height: 10.h),
                                     MaterialButton(
-                                      onPressed: () {
-                                        cubit.addOrRemoveFromCart(productID: cubit.carts[index].id.toString());
+                                      onPressed: () async {
+                                        final AudioPlayer audioPlayer = AudioPlayer();
+                                        try {
+                                          // تشغيل الصوت عند الضغط
+                                          await audioPlayer.play(AssetSource('sounds/sound1.mp3'));
+                                        } catch (e) {
+                                          print("Error playing sound: $e"); // طباعة الخطأ إذا حدث
+                                        }
+
+                                        // إضافة أو إزالة من العربة
+                                        cubit.addOrRemoveFromCart(
+                                            productID: cubit.carts[index].id.toString());
                                       },
                                       color: mainColor,
                                       shape: RoundedRectangleBorder(
@@ -104,6 +120,7 @@ class CartScreen extends StatelessWidget {
                                       minWidth: double.infinity,
                                       height: 35.h,
                                     ),
+
                                   ],
                                 ),
                               ),
@@ -113,13 +130,23 @@ class CartScreen extends StatelessWidget {
                       );
                     },
                   )
-                      : const Center(child: Text('Your cart is empty')),
-                ),
+                      : Center(
+                    child:
+                        Image.asset(
+                          'assets/images/no-tuji.gif',
+                          height: 200.h,
+                          width: 200.w,
+                        ),
+
+                    ),
+                  ),
+
                 // عرض إجمالي السعر
                 Padding(
-                  padding:  EdgeInsets.symmetric(vertical: 20.0.h),
+                  padding: EdgeInsets.symmetric(vertical: 20.0.h),
                   child: Container(
-                    padding:  EdgeInsets.symmetric(vertical: 10.h, horizontal: 20.w),
+                    padding: EdgeInsets.symmetric(
+                        vertical: 10.h, horizontal: 20.w),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(8.r),
@@ -135,13 +162,17 @@ class CartScreen extends StatelessWidget {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                         Text(
+                        Text(
                           "Total Price",
-                          style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold),
+                          style: TextStyle(
+                              fontSize: 18.sp, fontWeight: FontWeight.bold),
                         ),
                         Text(
                           "$totalPrice \$",
-                          style: TextStyle(fontSize: 18.sp, color: mainColor, fontWeight: FontWeight.bold),
+                          style: TextStyle(
+                              fontSize: 18.sp,
+                              color: mainColor,
+                              fontWeight: FontWeight.bold),
                         ),
                       ],
                     ),

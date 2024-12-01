@@ -125,6 +125,7 @@ class _LoginScreenState extends State<LoginScreen> {
         child: Padding(
           padding: EdgeInsets.symmetric(
             horizontal: MediaQuery.of(context).size.width / 15.w,
+            vertical: 80.h
           ),
           child: Column(
             children: [
@@ -242,7 +243,6 @@ class _LoginScreenState extends State<LoginScreen> {
                             onPressed: () => validateEmailAndPassword(authCubit),
                             child:  Text(
                               'Login',
-
                               style: TextStyle(
                                 fontFamily:'Sevillana',
                                 fontSize: 30.sp,
@@ -265,8 +265,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                 Navigator.push(context, MaterialPageRoute(builder: (context) => RegisterScreen()));
                               },
                               child:  Text("Register",style: TextStyle(
+                                fontFamily:'Sevillana',
                                 color: Colors.black,
-                                fontSize: 15.sp,
+                                fontSize: 20.sp,
                                 fontWeight: FontWeight.bold,
                               ),),
                             ),

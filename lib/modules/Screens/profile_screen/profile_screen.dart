@@ -153,7 +153,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
           )
               : const Center(
-            child: CircularProgressIndicator(),
+            child: CupertinoActivityIndicator(),
           ),
         );
       },
