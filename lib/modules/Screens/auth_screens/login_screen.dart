@@ -158,6 +158,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       children: [
                         // Email TextField with icon
                         TextFormField(
+                          autovalidateMode: AutovalidateMode.onUserInteraction,
                           keyboardType: TextInputType.emailAddress,
                           controller: emailController,
                           decoration: InputDecoration(
@@ -189,6 +190,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                         // Password TextField with icon
                         TextFormField(
+                          autovalidateMode: AutovalidateMode.onUserInteraction,
                           controller: passwordController,
                           obscureText: !isPasswordVisible,
                           focusNode: passwordFocusNode,

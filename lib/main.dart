@@ -11,7 +11,6 @@ import 'layout/layout_cubit/layout_cubit.dart';
 import 'layout/layout_screen.dart';
 import 'modules/Screens/auth_screens/auth_cubit/auth_cubit.dart';
 import 'modules/Screens/auth_screens/login_screen.dart';
-
 import 'modules/Screens/splash_screen/splash_screen.dart';
 import 'shared/bloc_observer/bloc_observer.dart';
 import 'dart:io';
@@ -39,6 +38,13 @@ Future<void> main() async {
 
   // فتح الـ box الخاص بالصور أو البيانات التي تريد تخزينها
   await Hive.openBox<String>('imageBox');
+
+  // فتح الـ userBox للتخزين المحلي لبيانات المستخدم
+  var userBox = await Hive.openBox('userBox');
+
+  // يمكنك الآن قراءة البيانات من الـ userBox مثلًا:
+  var userData = userBox.get('userData'); // استبدل 'userData' بالمفتاح الذي تستخدمه
+  debugPrint("User Data: $userData");
 
   // التحقق من الاتصال بالشبكة
   var connectivityResult = await (Connectivity().checkConnectivity());
@@ -86,8 +92,7 @@ class MyApp extends StatelessWidget {
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        home:SplashScreen()
-       // userToken != null ? const SplashScreen() : LoginScreen(),
+        home: SplashScreen(), // يمكن تغيير هذه إلى شاشة تسجيل الدخول بناءً على حالة التوكن
       ),
     );
   }

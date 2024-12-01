@@ -13,45 +13,47 @@ class AuthCubit extends Cubit<AuthStates>{
 
   // Todo: API URL => https://student.valuxapps.com/api/
   // Todo: Register endpoint => register
-  void register({required String email,required String name,
-    required String phone,required String password}) async {
+  void register({required String email, required String name,
+    required String phone, required String password}) async {
     emit(RegisterLoadingState());
-    try{
+
+    try {
+      // إرسال طلب التسجيل مباشرة إلى الـ API بدون التحقق من وجود الرقم مسبقًا.
       Response response = await http.post(
-        // request Url = base url + method url ( endpoint ) = https://student.valuxapps.com + /api/register
-          Uri.parse('https://student.valuxapps.com/api/register'),
-          body: {
-            'name' : name,
-            'email' : email,
-            'password' : password,
-            'phone' : phone,
-            'image' : "jdfjfj"     // الصوره مش شغاله بس لازم ابعت قيمه ك value
-          },
+        Uri.parse('https://student.valuxapps.com/api/register'),
+        body: {
+          'name': name,
+          'email': email,
+          'password': password,
+          'phone': phone,
+          'image': "jdfjfj",  // الصورة الثابتة هنا
+        },
       );
-      if( response.statusCode == 200 )
-        {
-          var data = jsonDecode(response.body);
-          if( data['status'] == true )
-          {
-            // debugPrint("User login success and his Data is : ${responseData['data']['token']}");
-            await CacheNetwork.insertToCache(key: "token", value: data['data']['token']);
-            await CacheNetwork.insertToCache(key: "password", value: password);
-            userToken = await CacheNetwork.getCacheData(key: "token");
-            currentPassword = await CacheNetwork.getCacheData(key: "password");
-            emit(RegisterSuccessState());
-          }
-          else
-          {
-            debugPrint("Failed to login, reason is : ${data['message']}");
-            emit(FailedToLoginState(message: data['message']));
-          }
+
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body);
+
+        if (data['status'] == true) {
+          await CacheNetwork.insertToCache(key: "token", value: data['data']['token']);
+          await CacheNetwork.insertToCache(key: "password", value: password);
+          userToken = await CacheNetwork.getCacheData(key: "token");
+          currentPassword = await CacheNetwork.getCacheData(key: "password");
+          emit(RegisterSuccessState());
+        } else {
+          debugPrint("Failed to register, reason: ${data['message']}");
+          emit(FailedToRegisterState(message: data['message']));
         }
-    }
-    catch(e){
-      debugPrint("Failed to Register , reason : $e");
+      } else {
+        debugPrint("Failed to register, reason: ${response.body}");
+        emit(FailedToRegisterState(message: "Failed to register, try again later."));
+      }
+    } catch (e) {
+      debugPrint("Error during registration: $e");
       emit(FailedToRegisterState(message: e.toString()));
     }
   }
+
+
 
   // Account : mo.ha@gmail.com , password : 123456
   void login({required String email,required String password}) async {

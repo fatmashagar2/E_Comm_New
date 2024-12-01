@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
+import 'package:hive/hive.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:untitled15/modules/Screens/auth_screens/login_screen.dart';
 import 'package:untitled15/modules/Screens/profile_screen/profile_screen.dart';
 import '../shared/style/colors.dart';
@@ -23,7 +25,17 @@ class LayoutScreen extends StatelessWidget {
           appBar: AppBar(
             actions: [
               InkWell(
-                onTap: () {
+                onTap: () async {
+                  // مسح بيانات المستخدم من SharedPreferences أو Hive أو أي مكان آخر تم تخزين البيانات فيه
+                  // إذا كنت تستخدم SharedPreferences:
+                  SharedPreferences prefs = await SharedPreferences.getInstance();
+                  await prefs.remove('userToken'); // أو أي مفتاح تستخدمه لحفظ التوكن أو البيانات الخاصة بالمستخدم
+
+                  // إذا كنت تستخدم Hive:
+                  var box = await Hive.openBox('userBox');
+                  await box.clear(); // مسح جميع البيانات المخزنة في الـ box
+
+                  // بعد مسح البيانات، يمكنك الانتقال إلى شاشة تسجيل الدخول
                   Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(builder: (context) => LoginScreen()),
@@ -38,6 +50,7 @@ class LayoutScreen extends StatelessWidget {
                   ),
                 ),
               ),
+
             ],
             backgroundColor: fifthColor,
             elevation: 0,

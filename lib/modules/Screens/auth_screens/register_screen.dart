@@ -4,9 +4,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rive/rive.dart';
 import '../../../layout/layout_screen.dart';
-import '../../../shared/style/colors.dart';
-import '../../Widgets/alert_dialog.dart';
-import '../home_screen/home_screen.dart';
 import 'auth_cubit/animation_enum.dart';
 import 'auth_cubit/auth_cubit.dart';
 import 'auth_cubit/auth_states.dart';
@@ -161,6 +158,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     child: Column(
                       children: [
                         TextFormField(
+                          autovalidateMode: AutovalidateMode.onUserInteraction,
+
                           controller: nameController,
                           decoration: InputDecoration(
                             labelText: "Full Name",
@@ -180,6 +179,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         ),
                         SizedBox(height: MediaQuery.of(context).size.height / 30),
                         TextFormField(
+                          autovalidateMode: AutovalidateMode.onUserInteraction,
                           keyboardType: TextInputType.emailAddress,
                           controller: emailController,
                           decoration: InputDecoration(
@@ -195,6 +195,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         ),
                         SizedBox(height: MediaQuery.of(context).size.height / 30),
                         TextFormField(
+                          autovalidateMode: AutovalidateMode.onUserInteraction,
                           keyboardType: TextInputType.phone,
                           controller: phoneController,
                           decoration: InputDecoration(
@@ -210,6 +211,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         ),
                         SizedBox(height: MediaQuery.of(context).size.height / 30),
                         TextFormField(
+                          autovalidateMode: AutovalidateMode.onUserInteraction,
                           controller: passwordController,
                           obscureText: !_isPasswordVisible,
                           focusNode: passwordFocusNode,
