@@ -2,7 +2,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:rive/rive.dart';
+import 'package:untitled15/main.dart';
 import '../../../layout/layout_screen.dart';
 import 'auth_cubit/animation_enum.dart';
 import 'auth_cubit/auth_cubit.dart';
@@ -126,12 +128,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
       body: SingleChildScrollView(
         child: Padding(
           padding: EdgeInsets.symmetric(
-            horizontal: MediaQuery.of(context).size.width / 15,
+            horizontal: MediaQuery.of(context).size.width / 15.w,
           ),
           child: Column(
             children: [
               SizedBox(
-                height: MediaQuery.of(context).size.height / 3,
+                height: MediaQuery.of(context).size.height / 3.h,
                 child: riveArtboard == null
                     ? const SizedBox.shrink()
                     : Rive(artboard: riveArtboard!),
@@ -166,7 +168,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             labelStyle: TextStyle(color: Colors.black),
                             prefixIcon: Icon(Icons.person, color: Colors.black),
                             border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10.0),
+                              borderRadius: BorderRadius.circular(10.0.r),
                               borderSide: BorderSide(color: Colors.black),
                             ),
                           ),
@@ -177,7 +179,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             return null;
                           },
                         ),
-                        SizedBox(height: MediaQuery.of(context).size.height / 30),
+                        SizedBox(height: MediaQuery.of(context).size.height / 30.h),
                         TextFormField(
                           autovalidateMode: AutovalidateMode.onUserInteraction,
                           keyboardType: TextInputType.emailAddress,
@@ -187,13 +189,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             labelStyle: TextStyle(color: Colors.black),
                             prefixIcon: Icon(Icons.email, color: Colors.black),
                             border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10.0),
+                              borderRadius: BorderRadius.circular(10.0.r),
                               borderSide: BorderSide(color: Colors.black),
                             ),
                           ),
                           validator: emailValidator,
                         ),
-                        SizedBox(height: MediaQuery.of(context).size.height / 30),
+                        SizedBox(height: MediaQuery.of(context).size.height / 30.h),
                         TextFormField(
                           autovalidateMode: AutovalidateMode.onUserInteraction,
                           keyboardType: TextInputType.phone,
@@ -203,13 +205,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             labelStyle: TextStyle(color: Colors.black),
                             prefixIcon: Icon(Icons.phone, color: Colors.black),
                             border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10.0),
+                              borderRadius: BorderRadius.circular(10.0.r),
                               borderSide: BorderSide(color: Colors.black),
                             ),
                           ),
                           validator: phoneValidator,
                         ),
-                        SizedBox(height: MediaQuery.of(context).size.height / 30),
+                        SizedBox(height: MediaQuery.of(context).size.height / 30.h),
                         TextFormField(
                           autovalidateMode: AutovalidateMode.onUserInteraction,
                           controller: passwordController,
@@ -220,7 +222,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             labelStyle: TextStyle(color: Colors.black),
                             prefixIcon: Icon(Icons.lock, color: Colors.black),
                             border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10.0),
+                              borderRadius: BorderRadius.circular(10.0.r),
                               borderSide: BorderSide(color: Colors.black),
                             ),
                             suffixIcon: IconButton(
@@ -243,18 +245,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           ),
                           validator: passwordValidator,
                         ),
-                        SizedBox(height: MediaQuery.of(context).size.height / 30),
+                        SizedBox(height: MediaQuery.of(context).size.height / 30.h),
                         Container(
                           width: double.infinity,
                           padding: EdgeInsets.symmetric(
-                            horizontal: MediaQuery.of(context).size.width / 8,
+                            horizontal: MediaQuery.of(context).size.width / 8.w,
                           ),
                           child: TextButton(
                             style: TextButton.styleFrom(
                               backgroundColor: Colors.black,
-                              padding: const EdgeInsets.symmetric(vertical: 18),
+                              padding:  EdgeInsets.symmetric(vertical: 18.h),
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8),
+                                borderRadius: BorderRadius.circular(8.r),
                               ),
                             ),
                             onPressed: () {
@@ -264,14 +266,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               "Register",
                               style: TextStyle(
                                 fontFamily: 'Sevillana',
-                                fontSize: 30,
+                                fontSize: 30.sp,
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
                           ),
                         ),
-                        SizedBox(height: MediaQuery.of(context).size.height / 30),
+                        SizedBox(height: MediaQuery.of(context).size.height / 30.h),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [

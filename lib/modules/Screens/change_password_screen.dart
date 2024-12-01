@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../layout/layout_cubit/layout_cubit.dart';
 import '../../layout/layout_cubit/layout_states.dart';
@@ -22,16 +23,16 @@ class ChangePasswordScreen extends StatelessWidget {
         foregroundColor: Colors.black,
       ),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding:  EdgeInsets.all(16.0.h),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               'Please enter your current password and a new password to update.',
-              style: TextStyle(fontSize: 16, color: Colors.grey[600]),
+              style: TextStyle(fontSize: 16.sp, color: Colors.grey[600]),
               textAlign: TextAlign.center,
             ),
-            SizedBox(height: 40),
+            SizedBox(height: 40.h),
             // Current Password Field
             TextField(
               controller: currentPasswordController,
@@ -40,14 +41,14 @@ class ChangePasswordScreen extends StatelessWidget {
                 labelText: "Current Password",
                 hintText: "Enter your current password",
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(12.r),
                 ),
                 filled: true,
                 fillColor: Colors.grey[200],
-                contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
               ),
             ),
-            SizedBox(height: 16),
+            SizedBox(height: 16.h),
             // New Password Field
             TextField(
               controller: newPasswordController,
@@ -60,10 +61,10 @@ class ChangePasswordScreen extends StatelessWidget {
                 ),
                 filled: true,
                 fillColor: Colors.grey[200],
-                contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
               ),
             ),
-            SizedBox(height: 24),
+            SizedBox(height: 24.h),
             // Update Button
             BlocConsumer<LayoutCubit, LayoutStates>(
               listener: (context, state) {
@@ -91,10 +92,10 @@ class ChangePasswordScreen extends StatelessWidget {
                     }
                   },
                   color: mainColor,
-                  height: 50,
+                  height: 50.h,
                   minWidth: double.infinity,
                   textColor: Colors.white,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.r)),
                   child: Text(state is ChangePasswordLoadingState ? "Loading..." : "Update"),
                 );
               },

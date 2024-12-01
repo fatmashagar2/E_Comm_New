@@ -3,6 +3,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:audioplayers/audioplayers.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:untitled15/layout/layout_screen.dart';
 import '../../../layout/layout_cubit/layout_cubit.dart';
 import '../../../layout/layout_cubit/layout_states.dart';
 import '../../../models/product_model.dart';
@@ -37,7 +39,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
           backgroundColor: fifthColor,
           body: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 18.0, horizontal: 15),
+            padding:  EdgeInsets.symmetric(vertical: 18.0.h, horizontal: 15.w),
             child: ListView(
               shrinkWrap: true,
               children: [
@@ -45,8 +47,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   decoration:
                   BoxDecoration(
                     color: Colors.white,
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: Colors.black, width: 2),
+                    borderRadius: BorderRadius.circular(20.r),
+                    border: Border.all(color: Colors.black, width: 2.w),
                     boxShadow: [
                       BoxShadow(
                         color: Colors.grey.withOpacity(0.2),
@@ -70,18 +72,18 @@ class _HomeScreenState extends State<HomeScreen> {
                       filled: true,
                       fillColor: Colors.white,
                       enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(20),
+                        borderRadius: BorderRadius.circular(20.r),
                         borderSide: BorderSide.none,
                       ),
                       focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(20),
+                        borderRadius: BorderRadius.circular(20.r),
                         borderSide: BorderSide.none,
                       ),
                     ),
                   ),
                 ),
 
-                const SizedBox(height: 20),
+                 SizedBox(height: 20.h),
                 // Improved Banners Section
                 cubit.banners.isEmpty
                     ? const Center(
@@ -91,7 +93,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   itemCount: cubit.banners.length,
                   itemBuilder: (context, index, realIndex) {
                     return ClipRRect(
-                      borderRadius: BorderRadius.circular(15),
+                      borderRadius: BorderRadius.circular(15.r),
                       child: Image.network(
                         cubit.banners[index].url!,
                         fit: BoxFit.cover,
@@ -107,7 +109,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     autoPlayInterval: const Duration(seconds: 3),
                   ),
                 ),
-                const SizedBox(height: 20),
+                 SizedBox(height: 20.h),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -115,7 +117,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       "Products",
                       style: TextStyle(
                           color: Colors.black,
-                          fontSize: 25,
+                          fontSize: 25.sp,
                           fontFamily: 'Sevillana',
                           fontWeight: FontWeight.bold),
                     ),
@@ -123,13 +125,13 @@ class _HomeScreenState extends State<HomeScreen> {
                       "View all",
                       style: TextStyle(
                           color: secondColor,
-                          fontSize: 14,
+                          fontSize: 14.sp,
                           fontFamily: 'Sevillana',
                           fontWeight: FontWeight.bold),
                     ),
                   ],
                 ),
-                const SizedBox(height: 15),
+                 SizedBox(height: 15.h),
                 cubit.products.isEmpty
                     ? const Center(
                   child: CupertinoActivityIndicator(),
@@ -141,10 +143,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
                   gridDelegate:
-                  const SliverGridDelegateWithFixedCrossAxisCount(
+                   SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 2,
-                      mainAxisSpacing: 12,
-                      crossAxisSpacing: 15,
+                      mainAxisSpacing: 12.w,
+                      crossAxisSpacing: 15.h,
                       childAspectRatio: 0.7),
                   itemBuilder: (context, index) {
                     return _productItem(
@@ -176,9 +178,9 @@ Widget _productItem({
       borderRadius: BorderRadius.circular(8),
     ),
     elevation: 30,
-    margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+    margin:  EdgeInsets.symmetric(vertical: 10.h, horizontal: 12.w),
     child: Padding(
-      padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 12),
+      padding:  EdgeInsets.symmetric(vertical: 20.h, horizontal: 12.w),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -193,15 +195,15 @@ Widget _productItem({
               ),
             ),
           ),
-          const SizedBox(height: 5),
+           SizedBox(height: 5.h),
           Text(
             model.name!,
-            style: const TextStyle(
+            style:  TextStyle(
                 fontWeight: FontWeight.bold,
-                fontSize: 16,
+                fontSize: 16.sp,
                 overflow: TextOverflow.ellipsis),
           ),
-          const SizedBox(height: 2),
+           SizedBox(height: 2.h),
           Row(
             children: [
               Expanded(
@@ -211,7 +213,7 @@ Widget _productItem({
                       fit: BoxFit.scaleDown,
                       child: Text(
                         "${model.price!}\$ ",
-                        style: const TextStyle(fontSize: 15,
+                        style:  TextStyle(fontSize: 15.sp,
                             fontWeight: FontWeight.bold,
                             fontFamily: 'Playfair_Display'
                         ),
@@ -222,9 +224,9 @@ Widget _productItem({
                       fit: BoxFit.scaleDown,
                       child: Text(
                         "${model.oldPrice!}\$",
-                        style: const TextStyle(
+                        style:  TextStyle(
                             color: Colors.grey,
-                            fontSize: 12,
+                            fontSize: 12.sp,
                             fontFamily: 'Playfair_Display',
                             fontWeight: FontWeight.bold,
                             decoration: TextDecoration.lineThrough),
@@ -235,7 +237,7 @@ Widget _productItem({
               ),
             ],
           ),
-          const SizedBox(height: 10),
+           SizedBox(height: 10.h),
           // Icons row at the bottom
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -243,7 +245,7 @@ Widget _productItem({
               GestureDetector(
                 child: Icon(
                   Icons.favorite,
-                  size: 20,
+                  size: 20.h,
                   color: cubit.FavoritesIds.contains(model.id.toString())
                       ? Colors.red
                       : Colors.grey,
@@ -261,7 +263,7 @@ Widget _productItem({
               GestureDetector(
                 child: Icon(
                   Icons.shopping_cart,
-                  size: 20,
+                  size: 20.h,
                   color: cubit.cartIDs.contains(model.id.toString())
                       ? Colors.green  // إذا كان المنتج في السلة، اجعل اللون أخضر
                       : Colors.grey,  // إذا لم يكن في السلة، اجعل اللون رمادي

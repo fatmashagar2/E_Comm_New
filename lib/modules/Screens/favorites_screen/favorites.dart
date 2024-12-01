@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../layout/layout_cubit/layout_cubit.dart';
 import '../../../layout/layout_cubit/layout_states.dart';
@@ -18,14 +19,14 @@ class FavoritesScreen extends StatelessWidget {
         return Scaffold(
           backgroundColor: fifthColor,
           body: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12.5),
+            padding:  EdgeInsets.symmetric(vertical: 12.h, horizontal: 12.5.w),
             child: GridView.builder(
               physics: const BouncingScrollPhysics(),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              gridDelegate:  SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2, // عدد الأعمدة
-                mainAxisSpacing: 10, // المسافة بين العناصر رأسيًا
-                crossAxisSpacing: 10, // المسافة بين العناصر أفقيًا
-                childAspectRatio: 1 / 1.6, // نسبة العرض إلى الارتفاع
+                mainAxisSpacing: 10.h, // المسافة بين العناصر رأسيًا
+                crossAxisSpacing: 10.w, // المسافة بين العناصر أفقيًا
+                childAspectRatio: 1.w / 1.6.h, // نسبة العرض إلى الارتفاع
               ),
               itemCount: cubit.favorites.length,
               itemBuilder: (context, index) {
@@ -33,18 +34,18 @@ class FavoritesScreen extends StatelessWidget {
                 return Card(
                   color: Colors.white,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(8.r),
                   ),
                   elevation: 30,
-                  margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+                  margin:  EdgeInsets.symmetric(vertical: 10.h, horizontal: 12.w),
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 12),
+                    padding:  EdgeInsets.symmetric(vertical: 20.h, horizontal: 12.w),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Expanded(
                           child: ClipRRect(
-                            borderRadius: BorderRadius.circular(8),
+                            borderRadius: BorderRadius.circular(8.r),
                             child: Image.network(
                               item.image!,
                               fit: BoxFit.fill,
@@ -53,16 +54,16 @@ class FavoritesScreen extends StatelessWidget {
                             ),
                           ),
                         ),
-                        const SizedBox(height: 5),
+                         SizedBox(height: 5.h),
                         Text(
                           item.name!,
-                          style: const TextStyle(
+                          style:  TextStyle(
                             fontWeight: FontWeight.bold,
-                            fontSize: 16,
+                            fontSize: 16.sp,
                             overflow: TextOverflow.ellipsis,
                           ),
                         ),
-                        const SizedBox(height: 2),
+                         SizedBox(height: 2.h),
                         Row(
                           children: [
                             Expanded(
@@ -72,8 +73,8 @@ class FavoritesScreen extends StatelessWidget {
                                     fit: BoxFit.scaleDown,
                                     child: Text(
                                       "${item.price!}\$ ",
-                                      style: const TextStyle(
-                                        fontSize: 15,
+                                      style:  TextStyle(
+                                        fontSize: 15.sp,
                                         fontWeight: FontWeight.bold,
                                         fontFamily: 'Playfair_Display',
                                       ),
@@ -83,9 +84,9 @@ class FavoritesScreen extends StatelessWidget {
                                     fit: BoxFit.scaleDown,
                                     child: Text(
                                       "${item.oldPrice!}\$",
-                                      style: const TextStyle(
+                                      style:  TextStyle(
                                         color: Colors.grey,
-                                        fontSize: 12,
+                                        fontSize: 12.sp,
                                         fontFamily: 'Playfair_Display',
                                         fontWeight: FontWeight.bold,
                                         decoration: TextDecoration.lineThrough,
@@ -97,7 +98,7 @@ class FavoritesScreen extends StatelessWidget {
                             ),
                           ],
                         ),
-                        const SizedBox(height: 10),
+                         SizedBox(height: 10.h),
                         MaterialButton(
                           onPressed: () {
                             cubit.addOrRemoveFromFavorites(productID: item.id.toString());
@@ -111,7 +112,7 @@ class FavoritesScreen extends StatelessWidget {
                             style: TextStyle(color: Colors.white),
                           ),
                           minWidth: double.infinity,
-                          height: 35,
+                          height: 35.h,
                         ),
                       ],
                     ),

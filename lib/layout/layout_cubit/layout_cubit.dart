@@ -7,7 +7,6 @@ import '../../models/category_model.dart';
 import '../../models/product_model.dart';
 import '../../models/user_model.dart';
 import '../../modules/Screens/cart_screen/cart_screen.dart';
-import '../../modules/Screens/categories_screen/categories_screen.dart';
 import '../../modules/Screens/favorites_screen/favorites.dart';
 import '../../modules/Screens/home_screen/home_screen.dart';
 import '../../modules/Screens/profile_screen/profile_screen.dart';

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:rive/rive.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../layout/layout_screen.dart';  // The page you navigate to after success
@@ -123,12 +124,12 @@ class _LoginScreenState extends State<LoginScreen> {
       body: SingleChildScrollView(
         child: Padding(
           padding: EdgeInsets.symmetric(
-            horizontal: MediaQuery.of(context).size.width / 15,
+            horizontal: MediaQuery.of(context).size.width / 15.w,
           ),
           child: Column(
             children: [
               SizedBox(
-                height: MediaQuery.of(context).size.height / 3,
+                height: MediaQuery.of(context).size.height / 3.h,
                 child: riveArtboard == null
                     ? const SizedBox.shrink()
                     : Rive(
@@ -166,7 +167,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             labelStyle: TextStyle(color: Colors.black),
                             prefixIcon: Icon(Icons.email, color: Colors.black),
                             border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10.0),
+                              borderRadius: BorderRadius.circular(10.0.r),
                               borderSide: BorderSide(color: Colors.black),
                             ),
                           ),
@@ -186,7 +187,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             }
                           },
                         ),
-                        SizedBox(height: MediaQuery.of(context).size.height / 30),
+                        SizedBox(height: MediaQuery.of(context).size.height / 30.h),
 
                         // Password TextField with icon
                         TextFormField(
@@ -199,7 +200,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             labelStyle: TextStyle(color: Colors.black),
                             prefixIcon: Icon(Icons.lock, color: Colors.black),
                             border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10.0),
+                              borderRadius: BorderRadius.circular(10.0.r),
                               borderSide: BorderSide(color: Colors.black),
                             ),
                             suffixIcon: IconButton(
@@ -223,28 +224,28 @@ class _LoginScreenState extends State<LoginScreen> {
                             return null;
                           },
                         ),
-                        SizedBox(height: MediaQuery.of(context).size.height / 18),
+                        SizedBox(height: MediaQuery.of(context).size.height / 18.h),
 
                         Container(
                           width: double.infinity,
                           padding: EdgeInsets.symmetric(
-                            horizontal: MediaQuery.of(context).size.width / 8,
+                            horizontal: MediaQuery.of(context).size.width / 8.w,
                           ),
                           child: TextButton(
                             style: TextButton.styleFrom(
                               backgroundColor: Colors.black,
-                              padding: const EdgeInsets.symmetric(vertical: 18),
+                              padding: EdgeInsets.symmetric(vertical: 18.h),
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8),
+                                borderRadius: BorderRadius.circular(8.r),
                               ),
                             ),
                             onPressed: () => validateEmailAndPassword(authCubit),
-                            child: const Text(
+                            child:  Text(
                               'Login',
 
                               style: TextStyle(
                                 fontFamily:'Sevillana',
-                                fontSize: 30,
+                                fontSize: 30.sp,
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold,
                               ),
@@ -252,7 +253,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                         ),
 
-                        SizedBox(height: 20),
+                        SizedBox(height: 20.h),
 
                         // Registration link
                         Row(
@@ -263,9 +264,9 @@ class _LoginScreenState extends State<LoginScreen> {
                               onTap: () {
                                 Navigator.push(context, MaterialPageRoute(builder: (context) => RegisterScreen()));
                               },
-                              child: const Text("Register",style: TextStyle(
+                              child:  Text("Register",style: TextStyle(
                                 color: Colors.black,
-                                fontSize: 15,
+                                fontSize: 15.sp,
                                 fontWeight: FontWeight.bold,
                               ),),
                             ),

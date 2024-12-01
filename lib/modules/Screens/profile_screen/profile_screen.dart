@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:image_picker/image_picker.dart'; // استيراد الحزمة
 import 'dart:io'; // لاستعمال File لتحميل الصورة
 import 'package:hive/hive.dart';
@@ -91,7 +92,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           backgroundColor: fifthColor,
           body: cubit.userModel != null
               ? Padding(
-            padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 20.0),
+            padding:  EdgeInsets.symmetric(vertical: 20.0.h, horizontal: 20.0.w),
             child: Center(
               child: Column(
                 children: [
@@ -102,29 +103,29 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       backgroundImage: _image != null
                           ? FileImage(_image!) // استخدام الصورة المختارة
                           : NetworkImage(cubit.userModel!.image!) as ImageProvider, // استخدام الصورة من الإنترنت إذا لم يتم اختيار صورة
-                      radius: 60,
+                      radius: 60.r,
                     ),
                   ),
-                  const SizedBox(height: 20),
+                   SizedBox(height: 20.h),
                   // اسم المستخدم مع تنسيق النص
                   Text(
                     cubit.userModel!.name!,
-                    style: const TextStyle(
-                      fontSize: 22,
+                    style:  TextStyle(
+                      fontSize: 22.sp,
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
                     ),
                   ),
-                  const SizedBox(height: 10),
+                   SizedBox(height: 10.h),
                   // البريد الإلكتروني مع تنسيق النص
                   Text(
                     cubit.userModel!.email!,
-                    style: const TextStyle(
-                      fontSize: 18,
+                    style:  TextStyle(
+                      fontSize: 18.sp,
                       color: Colors.white60,
                     ),
                   ),
-                  const SizedBox(height: 30),
+                   SizedBox(height: 30.h),
                   // أزرار التفاعل
                   _buildButton(
                     context,
@@ -136,7 +137,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       );
                     },
                   ),
-                  const SizedBox(height: 20),
+                   SizedBox(height: 20.h),
                   _buildButton(
                     context,
                     label: "Update Data",
@@ -167,12 +168,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
       textColor: Colors.white,
       elevation: 5,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(30),
+        borderRadius: BorderRadius.circular(30.r),
       ),
-      padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 40),
+      padding:  EdgeInsets.symmetric(vertical: 15.h, horizontal: 40.w),
       child: Text(
         label,
-        style: const TextStyle(fontSize: 16),
+        style:  TextStyle(fontSize: 16.sp),
       ),
     );
   }

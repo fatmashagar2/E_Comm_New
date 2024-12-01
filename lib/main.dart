@@ -7,6 +7,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:untitled15/modules/Screens/on_boarding/on_boarding_screens.dart';
 import 'package:untitled15/shared/constants/constants.dart';
 import 'package:untitled15/shared/network/local_network.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'layout/layout_cubit/layout_cubit.dart';
 import 'layout/layout_screen.dart';
 import 'modules/Screens/auth_screens/auth_cubit/auth_cubit.dart';
@@ -90,9 +91,16 @@ class MyApp extends StatelessWidget {
           ..getProducts()
         ),
       ],
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        home: SplashScreen(), // يمكن تغيير هذه إلى شاشة تسجيل الدخول بناءً على حالة التوكن
+      child: ScreenUtilInit(
+        designSize: const Size(360, 640), // حجم التصميم الأساسي (iPhone X كمثال)
+        minTextAdapt: true,
+        builder: (context, child) {
+          return MaterialApp(
+            debugShowCheckedModeBanner: false,
+           //home:LoginScreen()
+             home: SplashScreen(), // يمكن تغيير هذه إلى شاشة تسجيل الدخول بناءً على حالة التوكن
+          );
+        },
       ),
     );
   }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../layout/layout_cubit/layout_cubit.dart';
 import '../../layout/layout_cubit/layout_states.dart';
@@ -27,7 +28,7 @@ class UpdateUserDataScreen extends StatelessWidget {
         foregroundColor: Colors.black,
       ),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding:  EdgeInsets.all(16.0.h),
         child: ListView(
           children: [
             // User Name Field
@@ -41,10 +42,10 @@ class UpdateUserDataScreen extends StatelessWidget {
                 ),
                 filled: true,
                 fillColor: Colors.grey[200],
-                contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
               ),
             ),
-            SizedBox(height: 15),
+            SizedBox(height: 15.h),
             // Phone Field
             TextField(
               controller: phoneController,
@@ -56,10 +57,10 @@ class UpdateUserDataScreen extends StatelessWidget {
                 ),
                 filled: true,
                 fillColor: Colors.grey[200],
-                contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
               ),
             ),
-            SizedBox(height: 15),
+            SizedBox(height: 15.h),
             // Email Field
             TextField(
               controller: emailController,
@@ -67,14 +68,14 @@ class UpdateUserDataScreen extends StatelessWidget {
                 labelText: "Email",
                 hintText: "Enter your email address",
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(12.r),
                 ),
                 filled: true,
                 fillColor: Colors.grey[200],
-                contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                contentPadding: EdgeInsets.symmetric(horizontal: 16.r, vertical: 14.h),
               ),
             ),
-            SizedBox(height: 20),
+            SizedBox(height: 20.h),
             // Update Button
             BlocConsumer<LayoutCubit, LayoutStates>(
               listener: (context, state) {
@@ -102,14 +103,14 @@ class UpdateUserDataScreen extends StatelessWidget {
                   },
                   color: mainColor,
                   textColor: Colors.white,
-                  height: 50,
+                  height: 50.h,
                   minWidth: double.infinity,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(12.r),
                   ),
                   child: Text(
                     state is UpdateUserDataLoadingState ? "Loading..." : "Update",
-                    style: TextStyle(fontSize: 16),
+                    style: TextStyle(fontSize: 16.sp),
                   ),
                 );
               },

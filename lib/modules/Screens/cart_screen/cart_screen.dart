@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../layout/layout_cubit/layout_cubit.dart';
 import '../../../layout/layout_cubit/layout_states.dart';
@@ -26,7 +27,7 @@ class CartScreen extends StatelessWidget {
           }
 
           return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 10),
+            padding:  EdgeInsets.symmetric(horizontal: 12.0.w, vertical: 10.h),
             child: Column(
               children: [
                 Expanded(
@@ -34,18 +35,18 @@ class CartScreen extends StatelessWidget {
                       ? ListView.separated(
                     itemCount: cubit.carts.length,
                     separatorBuilder: (context, index) {
-                      return const SizedBox(height: 12);
+                      return  SizedBox(height: 12.h);
                     },
                     itemBuilder: (context, index) {
                       return Card(
                         color: Colors.white,
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
+                          borderRadius: BorderRadius.circular(8.r),
                         ),
                         elevation: 30,
-                        margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+                        margin:  EdgeInsets.symmetric(vertical: 10.h, horizontal: 12.w),
                         child: Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 12),
+                          padding:  EdgeInsets.symmetric(vertical: 20.h, horizontal: 12.w),
                           child: Row(
                             children: [
                               ClipRRect(
@@ -53,11 +54,11 @@ class CartScreen extends StatelessWidget {
                                 child: Image.network(
                                   cubit.carts[index].image!,
                                   fit: BoxFit.fill,
-                                  height: 100,
-                                  width: 100,
+                                  height: 100.h,
+                                  width: 100.w,
                                 ),
                               ),
-                              const SizedBox(width: 12.5),
+                               SizedBox(width: 12.5.w),
                               Expanded(
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -66,28 +67,28 @@ class CartScreen extends StatelessWidget {
                                       cubit.carts[index].name!,
                                       style: TextStyle(
                                         color: mainColor,
-                                        fontSize: 17,
+                                        fontSize: 17.sp,
                                         fontWeight: FontWeight.bold,
                                         overflow: TextOverflow.ellipsis,
                                       ),
                                     ),
-                                    const SizedBox(height: 5),
+                                     SizedBox(height: 5.h),
                                     Row(
                                       children: [
                                         Text("${cubit.carts[index].price!} \$"),
-                                        const SizedBox(width: 5),
+                                         SizedBox(width: 5.w),
                                         if (cubit.carts[index].price != cubit.carts[index].oldPrice)
                                           Text(
                                             "${cubit.carts[index].oldPrice!} \$",
-                                            style: const TextStyle(
+                                            style:  TextStyle(
                                               color: Colors.grey,
-                                              fontSize: 12,
+                                              fontSize: 12.sp,
                                               decoration: TextDecoration.lineThrough,
                                             ),
                                           ),
                                       ],
                                     ),
-                                    const SizedBox(height: 10),
+                                     SizedBox(height: 10.h),
                                     MaterialButton(
                                       onPressed: () {
                                         cubit.addOrRemoveFromCart(productID: cubit.carts[index].id.toString());
@@ -101,7 +102,7 @@ class CartScreen extends StatelessWidget {
                                         style: TextStyle(color: Colors.white),
                                       ),
                                       minWidth: double.infinity,
-                                      height: 35,
+                                      height: 35.h,
                                     ),
                                   ],
                                 ),
@@ -116,12 +117,12 @@ class CartScreen extends StatelessWidget {
                 ),
                 // عرض إجمالي السعر
                 Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 20.0),
+                  padding:  EdgeInsets.symmetric(vertical: 20.0.h),
                   child: Container(
-                    padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                    padding:  EdgeInsets.symmetric(vertical: 10.h, horizontal: 20.w),
                     decoration: BoxDecoration(
                       color: Colors.white,
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(8.r),
                       boxShadow: [
                         BoxShadow(
                           color: Colors.grey.withOpacity(0.5),
@@ -134,13 +135,13 @@ class CartScreen extends StatelessWidget {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text(
+                         Text(
                           "Total Price",
-                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                          style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold),
                         ),
                         Text(
                           "$totalPrice \$",
-                          style: TextStyle(fontSize: 18, color: mainColor, fontWeight: FontWeight.bold),
+                          style: TextStyle(fontSize: 18.sp, color: mainColor, fontWeight: FontWeight.bold),
                         ),
                       ],
                     ),

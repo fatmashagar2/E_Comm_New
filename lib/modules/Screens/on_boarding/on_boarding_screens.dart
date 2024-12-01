@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:untitled15/modules/Screens/auth_screens/login_screen.dart';
@@ -78,9 +79,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   effect: ExpandingDotsEffect(
                     dotColor: Colors.grey,
                     activeDotColor: Colors.blue,
-                    dotHeight: 12,  // حجم النقاط
-                    dotWidth: 12,   // عرض النقاط
-                    spacing: 16,     // المسافة بين النقاط
+                    dotHeight: 12.h,  // حجم النقاط
+                    dotWidth: 12.w,   // عرض النقاط
+                    spacing: 16.w,     // المسافة بين النقاط
                   ),
                 ),
                 TextButton(
@@ -127,22 +128,22 @@ class OnboardingPage extends StatelessWidget {
       children: [
         Image.asset(
           imagePath,
-          height: 300,
+          height: 300.h,
         ),
-        SizedBox(height: 24),
+        SizedBox(height: 24.h),
         Text(
           title,
           style: TextStyle(
-            fontSize: 24,
+            fontSize: 24.sp,
             fontWeight: FontWeight.bold,
           ),
         ),
-        SizedBox(height: 16),
+        SizedBox(height: 16.h),
         Text(
           description,
           textAlign: TextAlign.center,
           style: TextStyle(
-            fontSize: 16,
+            fontSize: 16.sp,
             color: Colors.grey,
           ),
         ),

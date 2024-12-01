@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:untitled15/layout/layout_screen.dart';
 import '../on_boarding/on_boarding_screens.dart';
@@ -48,8 +49,8 @@ class _SplashScreenState extends State<SplashScreen> {
           children: [
             Image.asset(
               'assets/images/logo.gif', // استبدل مع المسار الفعلي للصورة
-              height: 250,
-              width: 250,
+              height: 250.h,
+              width: 250.w,
             ),
           ],
         ),
